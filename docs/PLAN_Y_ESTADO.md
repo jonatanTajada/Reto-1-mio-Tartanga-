@@ -36,4 +36,4 @@ Antes de inicializar Git se comprobó que la carpeta individual no pertenecía a
 
 Repositorio local inicializado con rama main y origin vinculado al remoto autorizado. Fetch confirmó que no había ramas remotas. `.gitignore` excluye documentos de clase, archivos privados y dependencias. Comprobación estática PASS: 13 originales intactos, 5 tablas, 7 triggers y enlaces válidos. Ejecución SQL pendiente; el bloque está preparado para revisión, no certificado como ejecutado.
 
-Publicación: pendiente de confirmar el primer push. La falta de ejecución SQL seguirá visible en el README y en el commit publicado.
+Publicación confirmada: primer push de main realizado el 11/10/2026, commit `3087965` (scripts y guías, con ejecución MySQL pendiente). Se utilizó email noreply del usuario de GitHub para no publicar una dirección privada. Sin push forzado ni documentos del grupo. Las actualizaciones documentales posteriores se publican como commits adicionales.
