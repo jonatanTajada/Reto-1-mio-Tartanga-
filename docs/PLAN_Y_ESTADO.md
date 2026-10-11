@@ -18,7 +18,7 @@ Fecha de revisión: 11 de octubre de 2026.
 
 Las capturas confirman cinco tablas y siete triggers; 04 terminó con ROLLBACK. Los nueve valores de resultado y los rechazos siguen sin evidencia individual registrada. La validación estática, los enlaces y la conservación de originales se documentan en la guía de pruebas.
 
-## Bloque 2 — Backend autorizado e implementado; comprobación MySQL pendiente
+## Bloque 2 — Backend implementado y probado con MySQL
 
 - [x] Releer enunciado y rúbrica DWS copiados en el proyecto individual.
 - [x] Ejemplo público y clase PDO; archivo local privado excluido de Git; base exclusiva `reto_1_mio`.
@@ -30,8 +30,11 @@ Las capturas confirman cinco tablas y siete triggers; 04 terminó con ROLLBACK. 
 - [x] Guía backend, endpoints, seguridad, pruebas y diagramas editables.
 - [x] Sintaxis PHP, 11 reglas de entrada y nueve respuestas HTTP públicas comprobadas.
 - [x] Cliente de prueba completa con datos temporales y limpieza específica por ID.
-- [ ] Configurar credenciales privadas: todavía falta `config/database.local.php`.
-- [ ] Conexión y prueba HTTP completa: intento ejecutado se detiene en login con 503.
+- [x] Usuario configuró credenciales en `config/database.local.php`; exclusión Git comprobada.
+- [x] Conexión PDO correcta, exclusivamente a `reto_1_mio`.
+- [x] Prueba HTTP ampliada: 115 respuestas correctas, CRUD y permisos de ambos roles.
+- [x] Comparar colecciones e históricos anteriores/después; datos conservados.
+- [x] Ocho consultas de integridad/limpieza correctas; ninguna fila temporal restante.
 - [ ] Componente externo RA9 funcional, sujeto a concretar integración útil dentro del alcance.
 - [ ] Revisión del usuario antes de empezar frontend.
 
@@ -52,6 +55,8 @@ Antes de inicializar Git se comprobó que la carpeta individual no pertenecía a
 Repositorio local inicializado con rama main y origin vinculado al remoto autorizado. Fetch confirmó que no había ramas remotas. `.gitignore` excluye documentos de clase, archivos privados y dependencias. Comprobación estática PASS: 13 originales intactos, 5 tablas, 7 triggers y enlaces válidos. Instalación original ejecutada por el usuario; nueva separación verificada por comparación de sentencias, sin reinstalar.
 
 Publicación confirmada: primer push de main realizado el 11/10/2026, commit `3087965` (scripts y guías, con ejecución MySQL pendiente). Se utilizó email noreply del usuario de GitHub para no publicar una dirección privada. Sin push forzado ni documentos del grupo. Las actualizaciones documentales posteriores se publican como commits adicionales.
+
+Backend inicial publicado en `dc968c5`, con falta de configuración local documentada en aquel momento. Tras configurar el usuario sus credenciales privadas, se ha comprobado conexión y prueba completa; las nuevas evidencias sustituyen esa limitación anterior. No se publican credenciales ni sesiones.
 
 ## Reorganización solicitada
 

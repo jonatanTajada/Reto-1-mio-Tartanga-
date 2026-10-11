@@ -10,7 +10,7 @@ Bloque 1: instalación original y datos ejecutados por el usuario en Workbench. 
 
 Se han separado los triggers en `01b_crear_triggers.sql` y mejorado las cabeceras, sin cambiar lógica. **La base existente no necesita ninguna ejecución por esta reorganización.** La nueva disposición no se ha instalado de nuevo en MySQL.
 
-Backend PHP implementado: rutas JSON, login/logout, sesiones, permisos, modelos, DAO y controladores de los cinco módulos. Comprobadas sintaxis, 11 validaciones y nueve respuestas HTTP sin conexión a MySQL. **Los flujos autenticados y CRUD reales quedan pendientes de configurar las credenciales locales y ejecutar la prueba completa.** El componente externo RA9 tampoco está integrado. Frontend y despliegue pendientes.
+Backend PHP implementado y probado con MySQL: rutas JSON, login/logout, sesiones, permisos, modelos, DAO y controladores de los cinco módulos. Comprobadas sintaxis, 11 validaciones, **115 respuestas HTTP** y ocho controles de integridad/limpieza. Los datos existentes y sus históricos se conservan; no quedan filas temporales. El componente externo RA9 todavía no está integrado. Frontend y despliegue pendientes.
 
 ## Tecnologías y arquitectura
 
@@ -63,7 +63,9 @@ Las vistas HTML, CSS y JavaScript se desarrollarán después de revisar el backe
 La base de datos ya está creada: **no volver a ejecutar la instalación**. Desde la raíz de la carpeta individual:
 
 ```powershell
-Copy-Item config/database.example.php config/database.local.php
+if (!(Test-Path config/database.local.php)) {
+    Copy-Item config/database.example.php config/database.local.php
+}
 # Completar usuario y contraseña MySQL editando ese archivo privado.
 php tools/comprobar_conexion.php
 php -S 127.0.0.1:8080 -t public public/router.php
@@ -99,7 +101,7 @@ Los scripts de trabajo solo usan `reto_1_mio`; no contienen instrucciones para e
 | Cambiar estado de notificaciones | Sí | No |
 | Eliminar notificaciones no REALIZADAS | No | Propias |
 
-Almacén es la ubicación inicial obligatoria. Las notificaciones comienzan PENDIENTES; las REALIZADAS no se eliminan. El control por propietario USER es una interpretación provisional. Los permisos están implementados, con pruebas entre roles pendientes de conexión MySQL. Las contradicciones de clase están registradas en las dudas.
+Almacén es la ubicación inicial obligatoria. Las notificaciones comienzan PENDIENTES; las REALIZADAS no se eliminan. El control por propietario USER es una interpretación provisional. Los permisos ADMIN/USER y rechazos de operaciones prohibidas se han probado por HTTP con MySQL. Las contradicciones de clase están registradas en las dudas.
 
 ## Documentación y comprobaciones
 

@@ -79,8 +79,10 @@ def completas(base):
     admin = Cliente(base)
     usuario = Cliente(base)
     otro = Cliente(base)
+    anonimo = Cliente(base)
     admin.login(os.environ.get('RETO_TEST_ADMIN', 'admin_demo'), os.environ.get('RETO_TEST_PASSWORD', 'DemoReto2026!'))
     originales = {ruta: admin.pedir('GET', '/api/' + ruta) for ruta in ('usuarios', 'ubicaciones', 'equipamientos', 'notificaciones')}
+    historicos_originales = {fila['id_equipamiento']: admin.pedir('GET', f"/api/equipamientos/{fila['id_equipamiento']}/historial") for fila in originales['equipamientos']}
     sufijo = 'http_test_' + uuid.uuid4().hex[:12]
     password = 'PruebaTemporal2026!'
     usuarios = []
@@ -90,7 +92,6 @@ def completas(base):
             usuarios.append(admin.pedir('POST', '/api/usuarios', {'nombre': 'Prueba', 'apellidos': 'Temporal', 'nombre_usuario': sufijo + str(numero), 'rol': 'USER', 'password': password}, 201))
         usuario.login(usuarios[0]['nombre_usuario'], password)
         otro.login(usuarios[1]['nombre_usuario'], password)
-        anonimo = Cliente(base)
         anonimo.pedir('GET', '/api/sesion')
         anonimo.pedir('POST', '/api/login', {'nombre_usuario': "' OR 1=1 --", 'password': password}, 401)
         usuario.pedir('GET', '/api/catalogos')
@@ -98,11 +99,18 @@ def completas(base):
             assert 'password_hash' not in admin.pedir('GET', f"/api/usuarios/{fila['id_usuario']}")
         admin.pedir('PUT', f"/api/usuarios/{usuarios[1]['id_usuario']}", {'nombre': 'Editado', 'apellidos': 'Temporal', 'nombre_usuario': usuarios[1]['nombre_usuario'], 'rol': 'USER'})
         usuario.pedir('GET', '/api/usuarios', esperado=403)
+        uid = usuarios[0]['id_usuario']
+        usuario.pedir('GET', f'/api/usuarios/{uid}', esperado=403)
+        usuario.pedir('POST', '/api/usuarios', {}, 403)
+        usuario.pedir('PUT', f'/api/usuarios/{uid}', {}, 403)
+        usuario.pedir('DELETE', f'/api/usuarios/{uid}', esperado=403)
         usuario.pedir('POST', '/api/ubicaciones', {'nombre': sufijo, 'descripcion': 'Temporal'}, 403)
         usuario.pedir('POST', '/api/equipamientos', {}, 403)
         ubicacion = admin.pedir('POST', '/api/ubicaciones', {'nombre': sufijo, 'descripcion': 'Destino temporal'}, 201)
         admin.pedir('PUT', f"/api/ubicaciones/{ubicacion['id_ubicacion']}", {'nombre': sufijo, 'descripcion': 'Destino editado'})
         usuario.pedir('GET', f"/api/ubicaciones/{ubicacion['id_ubicacion']}")
+        usuario.pedir('PUT', f"/api/ubicaciones/{ubicacion['id_ubicacion']}", {}, 403)
+        usuario.pedir('DELETE', f"/api/ubicaciones/{ubicacion['id_ubicacion']}", esperado=403)
         admin.pedir('POST', '/api/ubicaciones', {'nombre': sufijo, 'descripcion': 'Duplicada'}, 409)
         admin.pedir('POST', '/api/ubicaciones', {'nombre': ' ', 'descripcion': 'Temporal'}, 422)
         admin.pedir('POST', '/api/ubicaciones', bruto=b'{', esperado=400)
@@ -112,12 +120,16 @@ def completas(base):
         datos_equipo = {'nombre': sufijo, 'descripcion': 'Temporal', 'marca': 'Demo', 'modelo': 'Demo', 'categoria': 'OTROS'}
         equipo = admin.pedir('POST', '/api/equipamientos', datos_equipo, 201)
         eid = equipo['id_equipamiento']
+        usuario.pedir('GET', f'/api/equipamientos/{eid}')
         historial = admin.pedir('GET', f'/api/equipamientos/{eid}/historial')
         assert len(historial) == 1 and historial[0]['ubicacion'] == 'Almacén' and historial[0]['actual']
         admin.pedir('PATCH', f'/api/equipamientos/{eid}/ubicacion', {'id_ubicacion': ubicacion['id_ubicacion']}, 403)
         usuario.pedir('PUT', f'/api/equipamientos/{eid}', datos_equipo, 403)
         usuario.pedir('DELETE', f'/api/equipamientos/{eid}', esperado=403)
         admin.pedir('PUT', f'/api/equipamientos/{eid}', datos_equipo | {'id_ubicacion_actual': 1}, 422)
+        usuario.pedir('PATCH', f'/api/equipamientos/{eid}/ubicacion', {'id_ubicacion': ubicacion['id_ubicacion']}, 403, csrf=False)
+        usuario.pedir('PATCH', f'/api/equipamientos/{eid}/ubicacion', {'id_ubicacion': '1 OR 1=1'}, 422)
+        usuario.pedir('PATCH', f'/api/equipamientos/{eid}/ubicacion', {'id_ubicacion': 4294967295}, 404)
         usuario.pedir('PATCH', f'/api/equipamientos/{eid}/ubicacion', {'id_ubicacion': ubicacion['id_ubicacion']})
         historial = usuario.pedir('GET', f'/api/equipamientos/{eid}/historial')
         assert len(historial) == 2 and historial[0]['fecha_fin'] == historial[1]['fecha_inicio']
@@ -129,12 +141,18 @@ def completas(base):
         admin.pedir('DELETE', f"/api/ubicaciones/{ubicacion['id_ubicacion']}", esperado=409)
         almacen = next(u for u in originales['ubicaciones'] if u['nombre'] == 'Almacén')
         admin.pedir('DELETE', f"/api/ubicaciones/{almacen['id_ubicacion']}", esperado=409)
+        admin.pedir('PUT', f"/api/ubicaciones/{almacen['id_ubicacion']}", {'nombre': 'Almacen cambiado', 'descripcion': 'No debe guardarse'}, 409)
+        usuario.pedir('POST', '/api/notificaciones', {'titulo': sufijo, 'descripcion': 'Temporal', 'id_usuario': usuarios[1]['id_usuario']}, 422)
+        usuario.pedir('POST', '/api/notificaciones', {'titulo': sufijo, 'descripcion': 'Temporal', 'estado': 'REALIZADA'}, 422)
         aviso = usuario.pedir('POST', '/api/notificaciones', {'titulo': sufijo, 'descripcion': 'Temporal'}, 201)
         nid = aviso['id_notificacion']
         assert aviso['estado'] == 'PENDIENTE' and aviso['id_usuario'] == usuarios[0]['id_usuario']
         otro.pedir('GET', f'/api/notificaciones/{nid}', esperado=404)
         otro.pedir('PUT', f'/api/notificaciones/{nid}', {'titulo': 'Otro', 'descripcion': 'Ajeno'}, 404)
         otro.pedir('DELETE', f'/api/notificaciones/{nid}', esperado=404)
+        assert all(fila['id_notificacion'] != nid for fila in otro.pedir('GET', '/api/notificaciones'))
+        assert any(fila['id_notificacion'] == nid for fila in usuario.pedir('GET', '/api/notificaciones'))
+        admin.pedir('GET', f'/api/notificaciones/{nid}')
         admin.pedir('POST', '/api/notificaciones', {'titulo': sufijo, 'descripcion': 'Temporal'}, 403)
         admin.pedir('PUT', f'/api/notificaciones/{nid}', {'titulo': sufijo, 'descripcion': 'Temporal'}, 403)
         admin.pedir('DELETE', f'/api/notificaciones/{nid}', esperado=403)
@@ -142,10 +160,18 @@ def completas(base):
         usuario.pedir('PUT', f'/api/notificaciones/{nid}', {'titulo': sufijo, 'descripcion': 'Editada'})
         admin.pedir('PATCH', f'/api/notificaciones/{nid}/estado', {'estado': 'INVALIDO'}, 422)
         admin.pedir('PATCH', f'/api/notificaciones/{nid}/estado', {'estado': 'REALIZADA'})
+        usuario.pedir('PUT', f'/api/notificaciones/{nid}', {'titulo': sufijo, 'descripcion': 'Edición permitida tras realización'})
         usuario.pedir('DELETE', f'/api/notificaciones/{nid}', esperado=409)
         admin.pedir('PATCH', f'/api/notificaciones/{nid}/estado', {'estado': 'EN_PROCESO'})
         usuario.pedir('DELETE', f'/api/notificaciones/{nid}')
         aviso = None
+        # Cambiar el rol debe afectar a una sesión ya abierta, sin volver a hacer login.
+        datos_otro = {'nombre': 'Editado', 'apellidos': 'Temporal', 'nombre_usuario': usuarios[1]['nombre_usuario'], 'rol': 'ADMIN'}
+        admin.pedir('PUT', f"/api/usuarios/{usuarios[1]['id_usuario']}", datos_otro)
+        otro.pedir('GET', '/api/usuarios')
+        otro.pedir('PATCH', f'/api/equipamientos/{eid}/ubicacion', {'id_ubicacion': ubicacion['id_ubicacion']}, 403)
+        admin.pedir('PUT', f"/api/usuarios/{usuarios[1]['id_usuario']}", datos_otro | {'rol': 'USER'})
+        otro.pedir('GET', '/api/usuarios', esperado=403)
         admin.pedir('DELETE', f"/api/usuarios/{admin.pedir('GET', '/api/sesion')['usuario']['id_usuario']}", esperado=409)
         usuario.pedir('POST', '/api/logout', {})
         usuario.pedir('GET', '/api/equipamientos', esperado=401)
@@ -167,8 +193,10 @@ def completas(base):
             admin.pedir('DELETE', f"/api/usuarios/{fila['id_usuario']}")
     for ruta, antes in originales.items():
         assert admin.pedir('GET', '/api/' + ruta) == antes, f'Los registros existentes de {ruta} han cambiado'
-    print('PASS: datos existentes conservados y filas temporales eliminadas.')
-    return admin.contador + usuario.contador + otro.contador
+    for eid, antes in historicos_originales.items():
+        assert admin.pedir('GET', f'/api/equipamientos/{eid}/historial') == antes, 'El histórico existente ha cambiado'
+    print('PASS: datos e históricos existentes conservados y filas temporales eliminadas.')
+    return admin.contador + usuario.contador + otro.contador + anonimo.contador
 
 
 if __name__ == '__main__':

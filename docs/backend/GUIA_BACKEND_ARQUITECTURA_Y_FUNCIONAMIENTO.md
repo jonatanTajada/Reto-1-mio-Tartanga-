@@ -44,4 +44,4 @@ El autoload local de `app/bootstrap.php` carga clases de `App\...`; no usa Compo
 
 ## Límites de este bloque
 
-Se han escrito todos los módulos solicitados. Hay evidencia de sintaxis, validaciones y HTTP sin MySQL; faltan pruebas positivas con la conexión local porque no hay credenciales configuradas. No se considera comprobado el CRUD real ni se acredita una nota. El componente externo de RA9, la interpretación de avisos propios y las contradicciones de clase se registran en [dudas y mejoras](../DUDAS_Y_MEJORAS.md). No se ha desplegado el servidor de clase.
+Se han escrito todos los módulos solicitados y se han comprobado con MySQL: 115 respuestas HTTP, CRUD, permisos de ambos roles, validaciones y ocho consultas de integridad/limpieza. Se compararon los datos e históricos existentes antes y después y se eliminaron las filas temporales. Estas pruebas no acreditan carga, concurrencia ni una nota. El componente externo de RA9, la interpretación de avisos propios y las contradicciones de clase se registran en [dudas y mejoras](../DUDAS_Y_MEJORAS.md). No se ha desplegado el servidor de clase.

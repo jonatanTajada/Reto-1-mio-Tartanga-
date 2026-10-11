@@ -39,7 +39,7 @@ No se añade vínculo notificación–equipamiento: el texto pide avisos relacio
 - Modificar directamente el histórico puede dejar cero intervalos abiertos, cambiar una ubicación o crear solapamientos. El índice garantiza **como máximo uno**, no exactamente uno. No habrá CRUD público del histórico; el DAO lo consultará y los triggers lo escribirán. La cuenta SQL futura debe tener solo SELECT sobre histórico, sin INSERT/UPDATE/DELETE.
 - Cambiar rol no reasigna avisos: si un USER pasa a ADMIN, puede consultar todos y cambiar estado, pero ya no editar contenido como USER. No se permite transferir autoría por el API.
 - El original y los scripts nuevos no crean cuentas SQL ni privilegios. La cuenta de runtime se preparará sin publicar credenciales.
-- El usuario ejecutó instalación/datos y consultas en Workbench, según capturas. El agente no ha reinstalado SQL. La conexión PDO y los flujos completos todavía no se prueban porque falta configuración privada; las capturas SQL no los acreditan.
+- El usuario ejecutó instalación/datos y consultas en Workbench, según capturas. El agente no ha reinstalado SQL. Tras configurar las credenciales privadas, se comprobaron conexión PDO, 115 respuestas HTTP y ocho consultas de integridad/limpieza; las colecciones e históricos existentes se conservaron.
 - Rubrica DWS RA7+RA9 (15%): planificar servicio web e integración funcional externa; no darlo por completo solo por devolver JSON.
 - No hay rúbricas independientes de cliente, despliegue y ciberseguridad en la copia; revisar entregas de Moodle.
 - El mapa mental se entrega como fuente Markdown. No se instala Markmap ni se cargan scripts remotos.
@@ -58,6 +58,10 @@ Las capturas del usuario confirman instalación original, carga y consultas de i
 - ADMIN no puede eliminar/degradar su cuenta y se conserva al menos un ADMIN mediante bloqueo transaccional. Recomendación adicional para evitar perder administración.
 - USER puede editar contenido de un aviso REALIZADA y ADMIN puede volver a cambiar estado: el requisito prohíbe borrarlo, no esas operaciones. Si la profesora exige inmutabilidad, habrá que cambiar esta política.
 - No se fuerza zona SQL: se conserva la del servidor porque los DATETIME de Workbench ya existen y no incorporan zona. Política horaria común pendiente de despliegue.
-- La rúbrica RA7+RA9 exige servicio e integración externa. API preparado y HTTP anónimo probado; biblioteca/componente externo no integrado. Propuesta para debatir: exportación de inventario con una biblioteca mantenida, si se acepta en alcance. No se dan por acreditados todos los criterios.
+- La rúbrica RA7+RA9 exige servicio e integración externa. API y flujos completos probados contra MySQL; biblioteca/componente externo no integrado. Propuesta para debatir: exportación de inventario con una biblioteca mantenida, si se acepta en alcance. No se dan por acreditados todos los criterios.
 - Límite de login por sesión implementado, insuficiente frente a cambio de cookies; rate limiting por IP y TLS pendientes del servidor real.
-- Credenciales reales ausentes: archivo ejemplo público y archivo local excluido. No se han supuesto claves ni solicitado contraseñas por chat.
+- Credenciales configuradas por el usuario en su archivo local excluido de Git; conexión comprobada sin mostrarlas. El ejemplo público permanece sin secretos. No se han supuesto claves ni solicitado contraseñas por chat.
+
+## Ampliación de pruebas con conexión local
+
+No aparecieron fallos funcionales en los escenarios ejecutados. Se corrigió el contador del cliente de pruebas, que inicialmente no sumaba dos peticiones de otro cliente anónimo, y se amplió la cobertura de denegaciones, cambio de rol en sesión vigente y conservación del histórico existente. Se añadió `tools/comprobar_integridad.php`, exclusivamente de lectura. Resultado final: 3 usuarios, 4 ubicaciones, 5 equipamientos, 7 intervalos de histórico y 3 notificaciones; cero filas temporales. Los AUTO_INCREMENT no se reinician y pueden tener huecos.

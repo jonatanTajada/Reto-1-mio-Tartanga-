@@ -11,7 +11,9 @@ Desde la raíz de **Reto 1 mio**, copia `config/database.example.php` a `config/
 El ejemplo usa host `127.0.0.1` y puerto `3306`. El archivo local está excluido por `/config/*.local.php` en `.gitignore`. No se crea automáticamente con una contraseña supuesta.
 
 ```powershell
-Copy-Item config/database.example.php config/database.local.php
+if (!(Test-Path config/database.local.php)) {
+    Copy-Item config/database.example.php config/database.local.php
+}
 php tools/comprobar_conexion.php
 ```
 

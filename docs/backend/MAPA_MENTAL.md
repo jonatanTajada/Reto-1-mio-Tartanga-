@@ -40,6 +40,9 @@ markmap:
 - Sintaxis PHP
 - Validaciones
 - HTTP anónimo
-- MySQL y flujos completos pendientes de configuración
+- MySQL: conexión comprobada
+- CRUD y permisos: 115 respuestas HTTP correctas
+- Integridad: ocho controles sin inconsistencias
+- Datos e históricos anteriores conservados
 - Componente externo RA9 pendiente
 - Frontend y Ubuntu posteriores
