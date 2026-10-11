@@ -6,14 +6,14 @@ Fecha: 11/10/2026. Estas evidencias distinguen archivos implementados de funcion
 
 - PHP 8.4.25: comprobación `php -l` de los 28 archivos PHP iniciales y del nuevo comprobador de integridad, sin errores de sintaxis (29 archivos PHP del proyecto, sin contar la configuración privada).
 - `php tools/probar_modelos.php`: 11 comprobaciones correctas. Unicode, vacío, tipo incorrecto, ID malicioso/fuera de rango, límite bcrypt, separación de ubicación/estado, límite TEXT por bytes, hash verificable y hash excluido de respuesta.
-- Servidor PHP local en `127.0.0.1:8080`: nueve respuestas HTTP comprobadas con `python tools/probar_http.py`. Sesión anónima, rutas 404, método 405, CSRF 403, recursos privados 401 y logout; también se comprueban cookie HttpOnly/SameSite y cabeceras no-store/nosniff.
+- Servidor PHP local en `127.0.0.1:8080`: diez respuestas HTTP públicas comprobadas con `python tools/probar_http.py` tras la integración. Sesión anónima, rutas 404 sin creación de cookie, método 405, CSRF 403, recursos privados 401 y logout; también se comprueban cookie HttpOnly/SameSite y cabeceras no-store/nosniff.
 - `php tools/comprobar_conexion.php`: conexión correcta con `reto_1_mio`, después de que el usuario configurara el archivo privado. No se mostraron credenciales ni se ejecutó instalación.
-- `python tools/probar_http.py --completo`: **115 respuestas HTTP correctas** en la versión ampliada. Login ADMIN y dos USER temporales, CRUD, permisos prohibidos, avisos propios/ajenos, CSRF, campos inesperados, JSON/tamaño/formato, duplicados, Almacén, FK, continuidad y repetición del traslado, cambio de rol en sesión abierta y revocación por contraseña.
+- `python tools/probar_http.py --completo`: **116 respuestas HTTP correctas** en la versión ampliada. Login ADMIN y dos USER temporales, CRUD, permisos prohibidos, avisos propios/ajenos, CSRF, campos inesperados, JSON/tamaño/formato, duplicados, Almacén, FK, continuidad y repetición del traslado, cambio de rol en sesión abierta y revocación por contraseña.
 - `php tools/comprobar_integridad.php`: ocho consultas correctas, cero inconsistencias y cero filas temporales. Recuento final: usuarios 3, ubicaciones 4, equipamientos 5, histórico 7, notificaciones 3.
 - Las colecciones existentes y el histórico de cada equipo anterior se compararon antes/después y se conservaron exactamente. No se borró ni recreó ninguna tabla/base ni se reiniciaron secuencias.
 - `python database/tools/validar_archivos.py`: originales conservados y comprobación estática de SQL/documentación válida.
 
-El intento de la entrega inicial terminó en 503 por falta de configuración; esta nueva evidencia lo sustituye. La primera ejecución con conexión pasó, pero el contador omitía dos peticiones anónimas (indicaba 81 en lugar de 83). Se corrigió el contador y se amplió la cobertura; la cifra final 115 incluye todas las respuestas de todos los clientes.
+El intento de la entrega inicial terminó en 503 por falta de configuración; esta nueva evidencia lo sustituye. La primera ejecución con conexión pasó, pero el contador omitía dos peticiones anónimas (indicaba 81 en lugar de 83). Se corrigió el contador y se amplió la cobertura; la cifra final 116 incluye todas las respuestas de todos los clientes.
 
 ## Repetir la prueba completa
 

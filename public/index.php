@@ -1,6 +1,20 @@
 <?php
 declare(strict_types=1);
 /** Punto de entrada único del API; selecciona rutas y transforma errores en respuestas seguras. */
+$rutaPublica = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+if (in_array($rutaPublica, ['/', '/index.html'], true)) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        http_response_code(405);
+        header('Allow: GET');
+        exit;
+    }
+    header('Content-Type: text/html; charset=utf-8');
+    header('Cache-Control: no-store');
+    header('X-Content-Type-Options: nosniff');
+    header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+    readfile(__DIR__ . '/index.html');
+    exit;
+}
 require dirname(__DIR__) . '/app/bootstrap.php';
 
 use App\Controller\{AuthController, EquipamientoController, NotificacionController, UbicacionController, UsuarioController};
@@ -12,7 +26,6 @@ use App\View\Respuesta;
 
 ini_set('display_errors', '0');
 try {
-    Sesion::iniciar();
     $metodo = $_SERVER['REQUEST_METHOD'];
     $ruta = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $permitidos = [];
@@ -40,6 +53,9 @@ try {
         header('Allow: ' . implode(', ', $permitidos));
         throw new HttpException(405, 'Este método HTTP no está permitido en la ruta.');
     }
+    // Rutas ajenas (por ejemplo favicon.ico) no deben crear cookies concurrentes
+    // con la primera petición de sesión del navegador y desajustar su token CSRF.
+    Sesion::iniciar();
     if ($metodo !== 'GET') {
         Sesion::csrf();
     }

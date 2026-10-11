@@ -11,10 +11,10 @@ try {
         'fechas_no_invertidas' => 'SELECT COUNT(*) FROM historico_ubicaciones WHERE fecha_fin < fecha_inicio',
         // LAG compara cada intervalo con su predecesor, incluso si comparten microsegundo.
         'continuidad_de_intervalos' => 'WITH intervalos AS (SELECT id_equipamiento, fecha_inicio, LAG(fecha_fin) OVER (PARTITION BY id_equipamiento ORDER BY fecha_inicio, id_historico) AS fin_anterior, ROW_NUMBER() OVER (PARTITION BY id_equipamiento ORDER BY fecha_inicio, id_historico) AS orden FROM historico_ubicaciones) SELECT COUNT(*) FROM intervalos WHERE orden > 1 AND (fin_anterior IS NULL OR fin_anterior <> fecha_inicio)',
-        'sin_usuarios_temporales_http' => "SELECT COUNT(*) FROM usuarios WHERE LEFT(nombre_usuario, 10) = 'http_test_'",
-        'sin_ubicaciones_temporales_http' => "SELECT COUNT(*) FROM ubicaciones WHERE LEFT(nombre, 10) = 'http_test_'",
-        'sin_equipos_temporales_http' => "SELECT COUNT(*) FROM equipamientos WHERE LEFT(nombre, 10) = 'http_test_'",
-        'sin_avisos_temporales_http' => "SELECT COUNT(*) FROM notificaciones WHERE LEFT(titulo, 10) = 'http_test_'",
+        'sin_usuarios_temporales' => "SELECT COUNT(*) FROM usuarios WHERE LEFT(nombre_usuario, 10) = 'http_test_' OR LEFT(nombre_usuario, 8) = 'ui_test_'",
+        'sin_ubicaciones_temporales' => "SELECT COUNT(*) FROM ubicaciones WHERE LEFT(nombre, 10) = 'http_test_' OR LEFT(nombre, 8) = 'ui_test_'",
+        'sin_equipos_temporales' => "SELECT COUNT(*) FROM equipamientos WHERE LEFT(nombre, 10) = 'http_test_' OR LEFT(nombre, 8) = 'ui_test_'",
+        'sin_avisos_temporales' => "SELECT COUNT(*) FROM notificaciones WHERE LEFT(titulo, 10) = 'http_test_' OR LEFT(titulo, 8) = 'ui_test_'",
     ];
     $fallos = 0;
     foreach ($consultas as $nombre => $sql) {

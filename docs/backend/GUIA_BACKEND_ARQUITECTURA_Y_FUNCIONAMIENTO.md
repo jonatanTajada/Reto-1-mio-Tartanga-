@@ -1,6 +1,6 @@
 # Guía del backend: arquitectura y funcionamiento
 
-El backend es un API PHP que recibe peticiones HTTP y devuelve JSON. Se ha implementado sin frameworks y sin capa Service. El frontend todavía no existe. Los controladores comprueban quién puede realizar cada operación; los DAO ejecutan SQL preparado sobre la base **reto_1_mio**, que ya está instalada.
+El backend es un API PHP que recibe peticiones HTTP y devuelve JSON. Se ha implementado sin frameworks y sin capa Service. La interfaz HTML/CSS/JS está integrada desde `public`, en el mismo origen. Los controladores comprueban quién puede realizar cada operación; los DAO ejecutan SQL preparado sobre la base **reto_1_mio**, que ya está instalada.
 
 ## Lectura recomendada
 
@@ -44,4 +44,4 @@ El autoload local de `app/bootstrap.php` carga clases de `App\...`; no usa Compo
 
 ## Límites de este bloque
 
-Se han escrito todos los módulos solicitados y se han comprobado con MySQL: 115 respuestas HTTP, CRUD, permisos de ambos roles, validaciones y ocho consultas de integridad/limpieza. Se compararon los datos e históricos existentes antes y después y se eliminaron las filas temporales. Estas pruebas no acreditan carga, concurrencia ni una nota. El componente externo de RA9, la interpretación de avisos propios y las contradicciones de clase se registran en [dudas y mejoras](../DUDAS_Y_MEJORAS.md). No se ha desplegado el servidor de clase.
+Se han escrito todos los módulos solicitados y se han comprobado con MySQL: 116 respuestas HTTP, CRUD, permisos de ambos roles, validaciones y ocho consultas de integridad/limpieza. Se compararon los datos e históricos existentes antes y después y se eliminaron las filas temporales. Estas pruebas no acreditan carga, concurrencia ni una nota. El componente externo de RA9, la interpretación de avisos propios y las contradicciones de clase se registran en [dudas y mejoras](../DUDAS_Y_MEJORAS.md). No se ha desplegado el servidor de clase.

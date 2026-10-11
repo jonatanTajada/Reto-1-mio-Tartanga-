@@ -57,6 +57,9 @@ class Cliente:
 
 
 def publicas(base):
+    sin_sesion = Cliente(base)
+    sin_sesion.pedir('GET', '/favicon.ico', esperado=404)
+    assert sin_sesion.cabeceras.get('Set-Cookie') is None, 'Las rutas desconocidas no deben crear sesiones'
     cliente = Cliente(base)
     sesion = cliente.pedir('GET', '/api/sesion')
     assert sesion['usuario'] is None and len(sesion['csrf_token']) == 64
@@ -72,7 +75,7 @@ def publicas(base):
     cliente.pedir('PATCH', '/api/ubicaciones/1/estado', {}, esperado=404)
     cliente.pedir('POST', '/api/logout', {})
     cliente.pedir('GET', '/api/notificaciones', esperado=401)
-    return cliente.contador
+    return cliente.contador + sin_sesion.contador
 
 
 def completas(base):

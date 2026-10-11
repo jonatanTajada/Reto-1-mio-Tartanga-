@@ -4,11 +4,11 @@ Fuentes locales conservadas: `Documentacion/2DAW_RetoAlumnado_Reto1.pdf`, `Docum
 
 | Apartado | Peso | Implementación | Evidencia y pendiente |
 |---|---:|---|---|
-| MVC y estructura PHP | 20% | Entrada/rutas, controladores, modelos, DAO y vista JSON separados; sin Service ni framework | Sintaxis comprobada; frontend HTML pendiente |
+| MVC y estructura PHP | 20% | Entrada/rutas, controladores, modelos, DAO y vista JSON separados; sin Service ni framework | Sintaxis comprobada; vista HTML integrada y probada |
 | Acceso a datos | 30% | PDO nativo, CRUD preparado, filtro, relaciones, errores y transacciones | Conexión y CRUD por PHP comprobados; ocho controles de integridad/limpieza correctos |
 | Autenticación y reglas | 25% | Login/logout, sesión, hashes, autorización por operación, CSRF, traslado separado, historial en triggers | Prueba completa: operaciones permitidas y prohibidas, propietario, cambio de rol y revocación por contraseña; concurrencia no probada |
-| Servicios web y componentes externos (RA7+RA9) | 15% | API HTTP/JSON con métodos y códigos; cliente Python consume el servicio sin dependencias | Servicio con MySQL comprobado mediante 115 respuestas HTTP. **No hay componente de terceros integrado y no se considera cubierto RA9** |
-| Funcionamiento global e integración | 10% | Módulos y documentación del backend preparados | Aplicación completa, frontend y despliegue pendientes |
+| Servicios web y componentes externos (RA7+RA9) | 15% | API HTTP/JSON con métodos y códigos; cliente Python consume el servicio sin dependencias | Servicio con MySQL comprobado mediante 116 respuestas HTTP. **No hay componente de terceros integrado y no se considera cubierto RA9** |
+| Funcionamiento global e integración | 10% | Módulos backend/frontend y documentación integrados | CRUD y flujos principales comprobados; RA9 externo y despliegue pendientes |
 
 ## Requisitos aplicados
 

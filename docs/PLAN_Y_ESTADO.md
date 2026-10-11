@@ -36,13 +36,29 @@ Las capturas confirman cinco tablas y siete triggers; 04 terminó con ROLLBACK. 
 - [x] Comparar colecciones e históricos anteriores/después; datos conservados.
 - [x] Ocho consultas de integridad/limpieza correctas; ninguna fila temporal restante.
 - [ ] Componente externo RA9 funcional, sujeto a concretar integración útil dentro del alcance.
-- [ ] Revisión del usuario antes de empezar frontend.
+- [x] Usuario aprobó backend y autorizó frontend completo.
 
-No se recreó la base, no se instaló software ni se modificó documentación oficial. Detenerse al entregar este bloque; el frontend sigue sin autorización. Véase [evidencia del backend](backend/PRUEBAS_Y_ESTADO.md).
+No se recreó la base, no se instaló software ni se modificó documentación oficial. El bloque backend fue aprobado y el frontend se desarrolló después por autorización expresa. Véase [evidencia del backend](backend/PRUEBAS_Y_ESTADO.md).
 
-## Bloque 3 — Frontend, pendiente de aprobación del backend
+## Bloque 3 — Frontend implementado e integrado
 
-HTML semántico, CSS homogéneo y JavaScript modular. Login, navegación por rol, inventario, filtro, CRUD, traslado, histórico y avisos. Guía de estilo, eventos, DOM y asincronía. Pruebas de integración, accesibilidad con herramientas externas y usabilidad con usuarios reales; no afirmar pruebas humanas sin realizarlas. Detenerse para revisión.
+- [x] Leer DIN y resultados de Cliente del enunciado; fuentes oficiales intactas.
+- [x] HTML5, CSS propio y módulos JavaScript nativos, sin framework/CDN/compilación.
+- [x] Bocetos editables, guía de estilo, navegación por rol y adaptación.
+- [x] Acceso/cierre, inventario/filtro, detalle/histórico, equipos, traslados, ubicaciones, avisos y usuarios.
+- [x] Fetch del mismo origen, sesión y CSRF, validación, carga, mensajes, estados vacíos y confirmaciones.
+- [x] Ajustar entrada PHP para servir frontend y corregir sesión en rutas desconocidas.
+- [x] Chrome real: 32 comprobaciones, CRUD desde formularios, roles, texto seguro, teclado y red.
+- [x] Tamaños 320/390/768/1440 px y formulario móvil comprobados.
+- [x] Regresión API tras integración: 116 respuestas HTTP correctas.
+- [x] Integridad y limpieza de datos de pruebas backend/frontend: ocho controles correctos.
+- [x] Revisión de contraste para ocho pares, labels/IDs y árbol accesible Chrome.
+- [x] Capturas reales de acceso, escritorio y móvil; datos existentes conservados.
+- [ ] Validación externa formal HTML/CSS y auditoría completa WCAG/lector de pantalla.
+- [ ] Pruebas con personas reales y otros navegadores/dispositivos.
+- [ ] Revisión del usuario antes de siguiente bloque.
+
+La documentación distingue evidencias técnicas de pruebas humanas. Ver [guía frontend](frontend/GUIA_FRONTEND_ESTRUCTURA_Y_FUNCIONAMIENTO.md). No se promete una nota ni conformidad WCAG global. No se configura Ubuntu.
 
 ## Después
 

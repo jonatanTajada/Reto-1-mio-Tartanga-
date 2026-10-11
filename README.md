@@ -1,6 +1,6 @@
 # Reto 1 mío — Gestión de equipamiento
 
-Proyecto individual de aprendizaje de DAW. Permite preparar una aplicación para gestionar usuarios, equipamientos, ubicaciones, historial y notificaciones de mantenimiento de un centro educativo.
+Proyecto individual de aprendizaje de DAW. Aplicación para gestionar usuarios, equipamientos, ubicaciones, historial y notificaciones de mantenimiento de un centro educativo.
 
 **Autor: Jonatan Tajada Rico.**
 
@@ -10,11 +10,11 @@ Bloque 1: instalación original y datos ejecutados por el usuario en Workbench. 
 
 Se han separado los triggers en `01b_crear_triggers.sql` y mejorado las cabeceras, sin cambiar lógica. **La base existente no necesita ninguna ejecución por esta reorganización.** La nueva disposición no se ha instalado de nuevo en MySQL.
 
-Backend PHP implementado y probado con MySQL: rutas JSON, login/logout, sesiones, permisos, modelos, DAO y controladores de los cinco módulos. Comprobadas sintaxis, 11 validaciones, **115 respuestas HTTP** y ocho controles de integridad/limpieza. Los datos existentes y sus históricos se conservan; no quedan filas temporales. El componente externo RA9 todavía no está integrado. Frontend y despliegue pendientes.
+Frontend y backend implementados e integrados con MySQL. Interfaz HTML5/CSS propio/JavaScript nativo con todos los módulos y permisos. Comprobadas **32 pruebas de interfaz en Chrome**, **116 respuestas HTTP**, ocho controles de integridad/limpieza y ocho pares de contraste. Los datos existentes y sus históricos se conservan. El componente externo RA9, auditoría completa de accesibilidad, tests con personas y despliegue siguen pendientes.
 
 ## Tecnologías y arquitectura
 
-- HTML, CSS y JavaScript para vistas, eventos, DOM y comunicación asíncrona (pendiente).
+- HTML5, CSS propio externo y JavaScript nativo para vistas, eventos, DOM y fetch, sin frameworks/CDN.
 - PHP >= 8.2 con MVC y DAO mediante PDO, sin frameworks y **sin capa Service**.
 - MySQL 8.0.16 o posterior; MySQL Workbench para ejecutar SQL.
 - Mermaid para diagramas editables y Markdown compatible con Markmap para el mapa mental.
@@ -37,7 +37,10 @@ config/
   database.example.php        Ejemplo público, sin credenciales reales
   database.local.php          Privado; crear localmente, excluido de Git
 public/                       Único directorio expuesto por HTTP
-tools/                        Comprobaciones PHP y cliente de pruebas HTTP
+  index.html                  Interfaz
+  assets/css/                 Base, componentes y pantallas
+  assets/js/                  Sesión, API, DOM, formularios y módulos
+tools/                        Comprobaciones PHP, HTTP y navegador Chrome
 database/
   00_comprobar_entorno.sql
   01_crear_esquema.sql
@@ -52,13 +55,13 @@ docs/
   DUDAS_Y_MEJORAS.md
   bbdd/README.md
   backend/                    Guía, endpoints, seguridad, pruebas y diagramas
-  frontend/README.md
+  frontend/                   Guía, bocetos, estilo, pruebas y capturas
 Documentacion/                Copia de clase local, intacta y excluida de Git
 ```
 
-Las vistas HTML, CSS y JavaScript se desarrollarán después de revisar el backend. La carpeta `app/view` actual solo representa JSON.
+La vista HTML y sus recursos están en `public`; `app/view` representa las respuestas JSON de la API. No existe capa Service.
 
-## Ejecutar el backend existente
+## Ejecutar la aplicación
 
 La base de datos ya está creada: **no volver a ejecutar la instalación**. Desde la raíz de la carpeta individual:
 
@@ -71,9 +74,13 @@ php tools/comprobar_conexion.php
 php -S 127.0.0.1:8080 -t public public/router.php
 ```
 
-Abrir `http://127.0.0.1:8080/api/sesion`. Requiere PHP con pdo_mysql. Solo se admite conexión a `reto_1_mio`. No enviar credenciales al chat ni subir el archivo local.
+Abrir **http://127.0.0.1:8080/**. Requiere PHP con pdo_mysql y navegador moderno. Solo se admite conexión a `reto_1_mio`. No enviar credenciales al chat ni subir el archivo local.
 
 En otra terminal: `php tools/probar_modelos.php`, `python tools/probar_http.py` y, con la conexión disponible, `python tools/probar_http.py --completo`. La prueba completa crea y limpia filas aisladas; conserva los datos anteriores. Consulta la [guía de ejecución](docs/backend/CONFIGURACION_Y_EJECUCION.md) y los [endpoints y ejemplos](docs/backend/ENDPOINTS.md).
+
+Para la interfaz: `python tools/revisar_frontend.py` y `node tools/probar_frontend.mjs` (Node 22 y Chrome local, solo necesarios para esta prueba). Después, `php tools/comprobar_integridad.php`. No instalar dependencias. Consulta [ejecución y recorrido](docs/frontend/EJECUCION_Y_RECORRIDO.md).
+
+Cuentas ficticias: `admin_demo` (Administrador) y `conserje_demo` (Conserje), contraseña de aplicación `DemoReto2026!`. Se documentan en el recorrido; no son credenciales SQL ni deben utilizarse en producción.
 
 ## Instalación y configuración de la BD
 
@@ -116,7 +123,10 @@ Almacén es la ubicación inicial obligatoria. Las notificaciones comienzan PEND
 - [Pruebas del backend y limitaciones](docs/backend/PRUEBAS_Y_ESTADO.md).
 - [Correspondencia con la rúbrica](docs/backend/RUBRICA.md).
 - [Diagramas del backend](docs/backend/DIAGRAMAS.md).
-- [Frontend pendiente](docs/frontend/README.md).
+- [Guía del frontend](docs/frontend/GUIA_FRONTEND_ESTRUCTURA_Y_FUNCIONAMIENTO.md).
+- [Bocetos y capturas](docs/frontend/PANTALLAS_Y_BOCETOS.md).
+- [Guía de estilo](docs/frontend/GUIA_DE_ESTILO.md).
+- [Accesibilidad, pruebas y rúbricas](docs/frontend/ACCESIBILIDAD_Y_PRUEBAS.md).
 
 La documentación copiada de clase se conserva localmente, sin incluirla en el repositorio público por contener información del grupo. Los originales SQL permanecen en `Documentacion/DB`; no deben ejecutarse para esta versión. Sus huellas están registradas en `database/docs/ORIGINALES_SHA256.json`.
 

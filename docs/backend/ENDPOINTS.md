@@ -1,6 +1,6 @@
 # Endpoints del API
 
-Prefijo `/api`. Cuerpos de escritura como objetos JSON con `Content-Type: application/json`. Enviar la cookie de sesión y `X-CSRF-Token` en POST, PUT, PATCH y DELETE. Obtener primero el token con GET `/api/sesion`; login y logout lo renuevan. No se usa CORS: el futuro frontend se servirá desde el mismo origen.
+Prefijo `/api`. Cuerpos de escritura como objetos JSON con `Content-Type: application/json`. Enviar la cookie de sesión y `X-CSRF-Token` en POST, PUT, PATCH y DELETE. Obtener primero el token con GET `/api/sesion`; login y logout lo renuevan. No se usa CORS: frontend y API se sirven desde el mismo origen.
 
 ## Sesión y catálogos
 

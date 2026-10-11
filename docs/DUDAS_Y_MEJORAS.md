@@ -52,7 +52,18 @@ Las capturas del usuario confirman instalación original, carga y consultas de i
 
 ## Decisiones del backend individual
 
-- MVC sin Service: auxiliares HTTP técnicos, modelos sencillos con validación, DAO con SQL y controladores con permisos/transacciones. La vista actual es JSON; todavía no se ha hecho frontend.
+- MVC sin Service: auxiliares HTTP técnicos, modelos sencillos con validación, DAO con SQL y controladores con permisos/transacciones. La API representa JSON y la interfaz HTML/CSS/JS se sirve desde `public`.
+
+## Decisiones y pendientes del frontend
+
+- Interfaz nativa del mismo origen, sin librerías/CDN ni recursos remotos. Etiquetas Administrador/Conserje, enums internos sin cambiar.
+- Navegación por fragmento URL, formularios y detalle en diálogo nativo; tablas semánticas con desplazamiento interno en móvil.
+- La interfaz muestra controles por rol, pero los permisos reales siguen en PHP. No se ofrecen ubicación al crear equipo, autor/estado en aviso USER ni CRUD de histórico.
+- Chrome reveló una carrera del arranque de sesión por rutas desconocidas; la entrada PHP ahora valida ruta y método antes de iniciar sesión. Se conserva CSRF y se añade prueba de regresión.
+- Evidencia final: 32 comprobaciones UI con datos reales, 116 respuestas HTTP, ocho controles de integridad y ocho pares de contraste. Datos/históricos anteriores conservados.
+- El árbol accesible Chrome, foco, labels y contraste no certifican WCAG completo. Validadores HTML/CSS externos, lector de pantalla y pruebas con personas siguen pendientes.
+- No hay una rúbrica técnica independiente de Cliente en la copia: se siguen RA1/RA5/RA6/RA7 del enunciado; confirmar entregas adicionales de Moodle.
+- RA9 externo, contradicciones de clase, concurrencia, HTTPS/rate limiting y despliegue Ubuntu siguen abiertos. No se presenta una nota ni se instalan dependencias.
 - Sesión revalidada en MySQL por operación; cambiar contraseña invalida sesiones anteriores. Roles no se aceptan del cliente salvo el CRUD de usuarios ADMIN.
 - CSRF en toda escritura, incluido login; obtener token público antes de autenticar. Cookies HttpOnly y SameSite Strict; Secure en HTTPS.
 - ADMIN no puede eliminar/degradar su cuenta y se conserva al menos un ADMIN mediante bloqueo transaccional. Recomendación adicional para evitar perder administración.

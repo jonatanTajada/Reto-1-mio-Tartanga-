@@ -31,7 +31,7 @@ Es recomendable crear, posteriormente y desde administración MySQL, una cuenta 
 php -S 127.0.0.1:8080 -t public public/router.php
 ```
 
-Mantén la terminal abierta y consulta `http://127.0.0.1:8080/api/sesion`. Detén el servidor con Ctrl+C. La raíz `/` no es una página de inicio: todavía no hay frontend. El servidor integrado se usa para desarrollo, no como servidor de clase.
+Mantén la terminal abierta y abre `http://127.0.0.1:8080/` para utilizar la interfaz; `/api/sesion` sigue devolviendo JSON. Detén el servidor con Ctrl+C. El servidor integrado se usa para desarrollo, no como servidor de clase.
 
 PHP crea `var/sessions` para sus archivos privados de sesión; `var/` está excluido de Git y queda fuera de `public`. El usuario del proceso PHP necesita escritura allí. En Ubuntu debe tener acceso exclusivo para el usuario web; la carpeta se crea con modo 0700 cuando el sistema lo admite.
 

@@ -4,7 +4,7 @@ Fuentes Mermaid: se pueden editar como texto y abrir en un visor compatible. No 
 
 ```mermaid
 flowchart LR
-    Cliente[Cliente HTTP / futuro frontend] --> Entrada[public/index.php: ruta y método]
+    Cliente[Cliente HTTP / frontend nativo] --> Entrada[public/index.php: ruta y método]
     Entrada --> Seguridad[Sesión y CSRF]
     Seguridad --> Controlador[Controlador: permiso y coordinación]
     Controlador --> Modelo[Modelo: valida campos]

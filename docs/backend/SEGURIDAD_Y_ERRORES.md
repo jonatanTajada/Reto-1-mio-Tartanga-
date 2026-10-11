@@ -26,7 +26,7 @@ Las operaciones de actualización/borrado bloquean la fila durante comprobación
 
 JSON debe ser un objeto UTF-8, máximo 64 KiB y profundidad 32. Texto obligatorio, límites correspondientes al esquema, IDs positivos hasta INT UNSIGNED, enums con lista cerrada. La descripción TEXT se limita también por bytes. Consultas de entrada preparadas con PDO nativo; los fragmentos SQL variables son constantes internas, nunca nombres o SQL enviados por el cliente.
 
-El API no produce HTML. El futuro frontend deberá insertar los textos con `textContent` y tratar correctamente cada contexto de salida; la ausencia actual de vistas HTML no acredita pruebas completas de XSS del frontend.
+El API devuelve JSON. La vista HTML del mismo origen inserta los datos del servidor con `textContent` y métodos DOM seguros; Chrome comprobó una descripción con etiqueta img maliciosa como texto. Ese escenario no sustituye una auditoría completa de XSS.
 
 ## Errores HTTP
 

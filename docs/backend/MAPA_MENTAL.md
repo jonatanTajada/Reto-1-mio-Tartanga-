@@ -41,7 +41,7 @@ markmap:
 - Validaciones
 - HTTP anónimo
 - MySQL: conexión comprobada
-- CRUD y permisos: 115 respuestas HTTP correctas
+- CRUD y permisos: 116 respuestas HTTP correctas
 - Integridad: ocho controles sin inconsistencias
 - Datos e históricos anteriores conservados
 - Componente externo RA9 pendiente

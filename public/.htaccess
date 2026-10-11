@@ -2,4 +2,5 @@
 Options -Indexes
 DirectoryIndex index.php
 RewriteEngine On
+RewriteRule ^assets/(css|js)/[a-z0-9_-]+\.(css|js)$ - [L]
 RewriteRule ^ index.php [QSA,L]
