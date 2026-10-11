@@ -1,0 +1,5 @@
+# Apache: solo public debe ser DocumentRoot. Las credenciales quedan fuera de la web.
+Options -Indexes
+DirectoryIndex index.php
+RewriteEngine On
+RewriteRule ^ index.php [QSA,L]

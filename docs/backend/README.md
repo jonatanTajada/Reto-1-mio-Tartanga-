@@ -1,9 +1,5 @@
-# Backend — pendiente
+# Backend PHP
 
-Este bloque no ha empezado. Requiere revisar la base de datos antes.
+API MVC con modelos, DAO y controladores, sin framework ni Service. Módulos implementados; conexión y flujos completos MySQL pendientes de configuración privada. Frontend sin comenzar.
 
-Se utilizará PHP con MVC y DAO mediante PDO, sin frameworks ni capa Service. Controllers: peticiones, validación y autorización. Modelos: representación de datos. DAO: SQL preparado. Las sesiones determinarán permisos; el histórico se consultará sin duplicar sus triggers.
-
-Pendientes: configuración de ejemplo, conexión local, modelos, controllers, rutas, login/logout, permisos, CRUD y pruebas HTTP. La integración de componentes se decidirá conforme a la rúbrica.
-
-Consulta el [plan](../PLAN_Y_ESTADO.md) y las [dudas](../DUDAS_Y_MEJORAS.md).
+Abre la [guía principal](GUIA_BACKEND_ARQUITECTURA_Y_FUNCIONAMIENTO.md), las [pruebas y limitaciones](PRUEBAS_Y_ESTADO.md) y la [correspondencia con la rúbrica](RUBRICA.md).

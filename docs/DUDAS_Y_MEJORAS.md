@@ -10,7 +10,7 @@ Solo se han utilizado documentos de `Documentacion` dentro de la carpeta individ
 | PDF p. 6 frente a pp. 7–8; ODT Notificaciones | Ambos pueden cambiar estado en un párrafo, pero después solo ADMIN | Estado editable solo por ADMIN; USER edita datos | Pendiente confirmar |
 | PNG de casos de uso y `.dio`, nota 4; PDF pp. 7–8 | Diagrama bloquea borrado EN_PROCESO y REALIZADA; texto solo REALIZADA | Permitir borrar EN_PROCESO; bloquear REALIZADA | Pendiente confirmar |
 | SVG de casos de uso y diagramas antiguos en `.dio` | Compras, fungibles, stock y categorías gestionables no coinciden con texto ni SQL | No añadir módulos; enum de categorías del SQL | Pendiente aclarar alcance |
-| PDF p. 6 y reglas p. 8 | No delimita claramente notificaciones propias/ajenas de USER | Propuesta: USER gestiona las propias; no implementado en BD | Pendiente decidir antes del backend |
+| PDF p. 6 y reglas p. 8 | No delimita claramente notificaciones propias/ajenas de USER | Implementado en PHP: USER gestiona las propias; ADMIN consulta todas. No se cambia esquema | Interpretación provisional, pendiente confirmar |
 | ODT Gestión de usuarios | Lista aulas en lugar de acciones CRUD | Seguir CRUD del PDF p. 3 | Error editorial, no bloquea |
 | ODT Funciones / login | Propone hashear de nuevo para comparar | En backend usar password_hash al guardar y password_verify al autenticar | Corrección técnica |
 | ODT Funciones / inventario | Habla de referencia única no presente en SQL ni campos mínimos | Usar id_equipamiento; no imponer nombre único | Pendiente si se pide referencia adicional |
@@ -37,9 +37,9 @@ No se añade vínculo notificación–equipamiento: el texto pide avisos relacio
 
 - La BD comprueba que el creador de una notificación sea USER en el alta; no identifica a la persona autenticada que ejecuta una consulta. Todos los permisos reales deben implementarse en PHP.
 - Modificar directamente el histórico puede dejar cero intervalos abiertos, cambiar una ubicación o crear solapamientos. El índice garantiza **como máximo uno**, no exactamente uno. No habrá CRUD público del histórico; el DAO lo consultará y los triggers lo escribirán. La cuenta SQL futura debe tener solo SELECT sobre histórico, sin INSERT/UPDATE/DELETE.
-- Cambios posteriores de rol del creador y transferencias de autoría requieren una política en backend; no se añaden restricciones que impidan CRUD sin una decisión explícita.
+- Cambiar rol no reasigna avisos: si un USER pasa a ADMIN, puede consultar todos y cambiar estado, pero ya no editar contenido como USER. No se permite transferir autoría por el API.
 - El original y los scripts nuevos no crean cuentas SQL ni privilegios. La cuenta de runtime se preparará sin publicar credenciales.
-- SQL no ejecutado: no se pudo comprobar esquema existente, compatibilidad real del servidor, resultados de triggers ni concurrencia. Requiere Workbench.
+- El usuario ejecutó instalación/datos y consultas en Workbench, según capturas. El agente no ha reinstalado SQL. La conexión PDO y los flujos completos todavía no se prueban porque falta configuración privada; las capturas SQL no los acreditan.
 - Rubrica DWS RA7+RA9 (15%): planificar servicio web e integración funcional externa; no darlo por completo solo por devolver JSON.
 - No hay rúbricas independientes de cliente, despliegue y ciberseguridad en la copia; revisar entregas de Moodle.
 - El mapa mental se entrega como fuente Markdown. No se instala Markmap ni se cargan scripts remotos.
@@ -49,3 +49,15 @@ No se añade vínculo notificación–equipamiento: el texto pide avisos relacio
 A petición del usuario se separan triggers en 01b, manteniendo esquema en 01 y DML de demostración en 02. Almacén permanece como dato inicial obligatorio junto al esquema, porque no es un dato de prueba. DDL/DML describen tipos de sentencias; la separación por archivos es una convención de organización, no un requisito del motor ni de la rúbrica. No se cambia lógica ni se reejecuta instalación.
 
 Las capturas del usuario confirman instalación original, carga y consultas de integridad sin inconsistencias; 04 llegó a ROLLBACK. El usuario comunica funcionamiento correcto. No hay evidencia visual de nueve PASS ni de rechazos individuales. La advertencia sobre BINARY se conserva pendiente porque ahora solo se solicitan comentarios y organización.
+
+## Decisiones del backend individual
+
+- MVC sin Service: auxiliares HTTP técnicos, modelos sencillos con validación, DAO con SQL y controladores con permisos/transacciones. La vista actual es JSON; todavía no se ha hecho frontend.
+- Sesión revalidada en MySQL por operación; cambiar contraseña invalida sesiones anteriores. Roles no se aceptan del cliente salvo el CRUD de usuarios ADMIN.
+- CSRF en toda escritura, incluido login; obtener token público antes de autenticar. Cookies HttpOnly y SameSite Strict; Secure en HTTPS.
+- ADMIN no puede eliminar/degradar su cuenta y se conserva al menos un ADMIN mediante bloqueo transaccional. Recomendación adicional para evitar perder administración.
+- USER puede editar contenido de un aviso REALIZADA y ADMIN puede volver a cambiar estado: el requisito prohíbe borrarlo, no esas operaciones. Si la profesora exige inmutabilidad, habrá que cambiar esta política.
+- No se fuerza zona SQL: se conserva la del servidor porque los DATETIME de Workbench ya existen y no incorporan zona. Política horaria común pendiente de despliegue.
+- La rúbrica RA7+RA9 exige servicio e integración externa. API preparado y HTTP anónimo probado; biblioteca/componente externo no integrado. Propuesta para debatir: exportación de inventario con una biblioteca mantenida, si se acepta en alcance. No se dan por acreditados todos los criterios.
+- Límite de login por sesión implementado, insuficiente frente a cambio de cookies; rate limiting por IP y TLS pendientes del servidor real.
+- Credenciales reales ausentes: archivo ejemplo público y archivo local excluido. No se han supuesto claves ni solicitado contraseñas por chat.

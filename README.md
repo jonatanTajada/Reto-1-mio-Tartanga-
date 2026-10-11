@@ -10,20 +10,34 @@ Bloque 1: instalación original y datos ejecutados por el usuario en Workbench. 
 
 Se han separado los triggers en `01b_crear_triggers.sql` y mejorado las cabeceras, sin cambiar lógica. **La base existente no necesita ninguna ejecución por esta reorganización.** La nueva disposición no se ha instalado de nuevo en MySQL.
 
-Backend, frontend y despliegue pendientes. Todavía no hay aplicación web ejecutable ni login implementado. La revisión estática no sustituye las pruebas con el servidor.
+Backend PHP implementado: rutas JSON, login/logout, sesiones, permisos, modelos, DAO y controladores de los cinco módulos. Comprobadas sintaxis, 11 validaciones y nueve respuestas HTTP sin conexión a MySQL. **Los flujos autenticados y CRUD reales quedan pendientes de configurar las credenciales locales y ejecutar la prueba completa.** El componente externo RA9 tampoco está integrado. Frontend y despliegue pendientes.
 
 ## Tecnologías y arquitectura
 
 - HTML, CSS y JavaScript para vistas, eventos, DOM y comunicación asíncrona (pendiente).
-- PHP con MVC y DAO mediante PDO (pendiente), sin frameworks y **sin capa Service**.
+- PHP >= 8.2 con MVC y DAO mediante PDO, sin frameworks y **sin capa Service**.
 - MySQL 8.0.16 o posterior; MySQL Workbench para ejecutar SQL.
 - Mermaid para diagramas editables y Markdown compatible con Markmap para el mapa mental.
 
-Los controllers coordinarán peticiones, validación y autorización; los modelos representarán datos y los DAO accederán a MySQL. Las vistas no consultarán directamente la BD. Los triggers mantendrán el histórico, sin duplicar esas inserciones en PHP.
+Los controladores coordinan peticiones, validación y autorización; los modelos validan y representan datos y los DAO acceden a MySQL. La vista JSON no consulta directamente la BD. Los triggers mantienen el histórico, sin duplicar esas inserciones en PHP.
 
 ## Estructura actual
 
 ```text
+app/
+  controller/                 Permisos, coordinación y transacciones
+  model/                      Datos, validación y conexión PDO
+  dao/                        SQL preparado
+  http/                       Petición JSON y sesión/CSRF
+  view/                       Respuesta JSON
+  exception/                  Error HTTP controlado
+  bootstrap.php               Carga local de clases
+config/
+  app.php                     Sesión
+  database.example.php        Ejemplo público, sin credenciales reales
+  database.local.php          Privado; crear localmente, excluido de Git
+public/                       Único directorio expuesto por HTTP
+tools/                        Comprobaciones PHP y cliente de pruebas HTTP
 database/
   00_comprobar_entorno.sql
   01_crear_esquema.sql
@@ -37,12 +51,27 @@ docs/
   PLAN_Y_ESTADO.md
   DUDAS_Y_MEJORAS.md
   bbdd/README.md
-  backend/README.md
+  backend/                    Guía, endpoints, seguridad, pruebas y diagramas
   frontend/README.md
 Documentacion/                Copia de clase local, intacta y excluida de Git
 ```
 
-En el bloque 2 se definirán `controller`, `model`, `dao` y `config`; en el bloque 3 las vistas HTML, CSS y JavaScript. No se presentan como carpetas implementadas.
+Las vistas HTML, CSS y JavaScript se desarrollarán después de revisar el backend. La carpeta `app/view` actual solo representa JSON.
+
+## Ejecutar el backend existente
+
+La base de datos ya está creada: **no volver a ejecutar la instalación**. Desde la raíz de la carpeta individual:
+
+```powershell
+Copy-Item config/database.example.php config/database.local.php
+# Completar usuario y contraseña MySQL editando ese archivo privado.
+php tools/comprobar_conexion.php
+php -S 127.0.0.1:8080 -t public public/router.php
+```
+
+Abrir `http://127.0.0.1:8080/api/sesion`. Requiere PHP con pdo_mysql. Solo se admite conexión a `reto_1_mio`. No enviar credenciales al chat ni subir el archivo local.
+
+En otra terminal: `php tools/probar_modelos.php`, `python tools/probar_http.py` y, con la conexión disponible, `python tools/probar_http.py --completo`. La prueba completa crea y limpia filas aisladas; conserva los datos anteriores. Consulta la [guía de ejecución](docs/backend/CONFIGURACION_Y_EJECUCION.md) y los [endpoints y ejemplos](docs/backend/ENDPOINTS.md).
 
 ## Instalación y configuración de la BD
 
@@ -53,9 +82,9 @@ En el bloque 2 se definirán `controller`, `model`, `dao` y `config`; en el bloq
 5. Si no existe, ejecutar `01_crear_esquema.sql` con detención al primer error. Después `01b_crear_triggers.sql`, `02_datos_prueba.sql` una sola vez y `03_consultas_comprobacion.sql`.
 6. Seguir las [instrucciones completas y resultados esperados](database/docs/PRUEBAS_Y_WORKBENCH.md) para las pruebas 04 y 05.
 
-Los scripts de trabajo solo usan `reto_1_mio`; no contienen instrucciones para eliminar bases. Las credenciales SQL reales se configurarán localmente en el bloque 2 y no se publicarán. Los usuarios ficticios del script de prueba son cuentas de la futura aplicación, no cuentas de MySQL.
+Los scripts de trabajo solo usan `reto_1_mio`; no contienen instrucciones para eliminar bases. Las credenciales SQL reales se configuran localmente y no se publican. Los usuarios ficticios del script de prueba son cuentas de aplicación, no cuentas de MySQL.
 
-## Funcionalidades y permisos previstos
+## Funcionalidades y permisos implementados en el código
 
 | Operación | ADMIN | USER (conserje) |
 |---|---|---|
@@ -65,12 +94,12 @@ Los scripts de trabajo solo usan `reto_1_mio`; no contienen instrucciones para e
 | Cambiar ubicación del equipamiento | No | Sí |
 | Consultar ubicaciones e historial | Sí | Sí |
 | Crear, editar y eliminar ubicaciones | Sí | No |
-| Consultar notificaciones | Sí | Sí |
-| Crear y editar datos de notificaciones | No | Sí |
+| Consultar notificaciones | Todas | Propias |
+| Crear y editar datos de notificaciones | No | Propias |
 | Cambiar estado de notificaciones | Sí | No |
-| Eliminar notificaciones no REALIZADAS | No | Sí |
+| Eliminar notificaciones no REALIZADAS | No | Propias |
 
-Almacén es la ubicación inicial obligatoria. Las notificaciones comienzan PENDIENTES; las REALIZADAS no se eliminan. Los permisos de sesión quedan pendientes del backend. Las contradicciones de clase están registradas como interpretaciones provisionales.
+Almacén es la ubicación inicial obligatoria. Las notificaciones comienzan PENDIENTES; las REALIZADAS no se eliminan. El control por propietario USER es una interpretación provisional. Los permisos están implementados, con pruebas entre roles pendientes de conexión MySQL. Las contradicciones de clase están registradas en las dudas.
 
 ## Documentación y comprobaciones
 
@@ -81,7 +110,11 @@ Almacén es la ubicación inicial obligatoria. Las notificaciones comienzan PEND
 - [Diagrama entidad-relación](database/docs/MODELO_ENTIDAD_RELACION.md).
 - [Mapa mental editable](database/docs/MAPA_MENTAL.md).
 - [Pruebas y Workbench](database/docs/PRUEBAS_Y_WORKBENCH.md).
-- [Backend](docs/backend/README.md) y [frontend](docs/frontend/README.md), pendientes de sus revisiones.
+- [Guía del backend](docs/backend/GUIA_BACKEND_ARQUITECTURA_Y_FUNCIONAMIENTO.md).
+- [Pruebas del backend y limitaciones](docs/backend/PRUEBAS_Y_ESTADO.md).
+- [Correspondencia con la rúbrica](docs/backend/RUBRICA.md).
+- [Diagramas del backend](docs/backend/DIAGRAMAS.md).
+- [Frontend pendiente](docs/frontend/README.md).
 
 La documentación copiada de clase se conserva localmente, sin incluirla en el repositorio público por contener información del grupo. Los originales SQL permanecen en `Documentacion/DB`; no deben ejecutarse para esta versión. Sus huellas están registradas en `database/docs/ORIGINALES_SHA256.json`.
 

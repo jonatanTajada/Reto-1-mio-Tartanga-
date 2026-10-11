@@ -14,13 +14,28 @@ Fecha de revisión: 11 de octubre de 2026.
 - [x] Usuario ejecutó esquema original y datos desde Workbench (capturas).
 - [x] Preflight del usuario confirmó que la base no existía antes del alta.
 - [ ] Ejecutar pruebas 04 y 05 y registrar resultados reales.
-- [ ] Revisión del usuario antes del bloque 2.
+- [x] Usuario autorizó el bloque 2 y sus módulos backend.
 
 Las capturas confirman cinco tablas y siete triggers; 04 terminó con ROLLBACK. Los nueve valores de resultado y los rechazos siguen sin evidencia individual registrada. La validación estática, los enlaces y la conservación de originales se documentan en la guía de pruebas.
 
-## Bloque 2 — Backend, pendiente de aprobación
+## Bloque 2 — Backend autorizado e implementado; comprobación MySQL pendiente
 
-MVC con DAO y PDO, sin Service: conexión de ejemplo, modelos, rutas, controllers, sesiones, permisos, validación y errores. Módulos de usuarios, equipamientos, ubicaciones, histórico y notificaciones. Separar edición de datos de equipamientos y traslado. Probar HTTP e integridad sin duplicar triggers. Revisar servicios web e integración real de componentes conforme a la rúbrica; JSON por sí solo no acredita todo el criterio. Detenerse para revisión.
+- [x] Releer enunciado y rúbrica DWS copiados en el proyecto individual.
+- [x] Ejemplo público y clase PDO; archivo local privado excluido de Git; base exclusiva `reto_1_mio`.
+- [x] Modelos, DAO, controladores y rutas, sin Service ni framework.
+- [x] Login/logout, sesión, CSRF, roles y validación por operación.
+- [x] Usuarios, equipamientos, ubicaciones, histórico y notificaciones.
+- [x] Separar edición ADMIN y traslado USER, con histórico escrito solo por triggers.
+- [x] Excepciones, JSON, códigos HTTP y transacciones.
+- [x] Guía backend, endpoints, seguridad, pruebas y diagramas editables.
+- [x] Sintaxis PHP, 11 reglas de entrada y nueve respuestas HTTP públicas comprobadas.
+- [x] Cliente de prueba completa con datos temporales y limpieza específica por ID.
+- [ ] Configurar credenciales privadas: todavía falta `config/database.local.php`.
+- [ ] Conexión y prueba HTTP completa: intento ejecutado se detiene en login con 503.
+- [ ] Componente externo RA9 funcional, sujeto a concretar integración útil dentro del alcance.
+- [ ] Revisión del usuario antes de empezar frontend.
+
+No se recreó la base, no se instaló software ni se modificó documentación oficial. Detenerse al entregar este bloque; el frontend sigue sin autorización. Véase [evidencia del backend](backend/PRUEBAS_Y_ESTADO.md).
 
 ## Bloque 3 — Frontend, pendiente de aprobación del backend
 
@@ -40,4 +55,4 @@ Publicación confirmada: primer push de main realizado el 11/10/2026, commit `30
 
 ## Reorganización solicitada
 
-Esquema DDL en 01, triggers en 01b y datos DML en 02. Cabeceras y secciones en los siete SQL. Sin cambios de lógica ni ejecución en la BD. Orden nuevo: 00 -> 01 -> 01b -> 02 -> 03 -> 04 -> 05. No repetir instalación sobre la base existente. Backend sin iniciar.
+Esquema DDL en 01, triggers en 01b y datos DML en 02. Cabeceras y secciones en los siete SQL. Sin cambios de lógica ni ejecución en la BD. Orden nuevo: 00 -> 01 -> 01b -> 02 -> 03 -> 04 -> 05. No repetir instalación sobre la base existente. El backend se ha implementado después, por autorización expresa.
