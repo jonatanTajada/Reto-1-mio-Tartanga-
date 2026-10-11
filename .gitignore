@@ -1,0 +1,18 @@
+# Documentación de clase: se conserva localmente, sin publicar datos del grupo.
+/Documentacion/
+.env
+.env.*
+!.env.example
+/config/*.local.php
+/config/database.php
+/database/private/
+/database/backups/
+*.log
+*.sql.bak
+*.odt#
+*.ods#
+~$*
+/vendor/
+/node_modules/
+.DS_Store
+Thumbs.db
