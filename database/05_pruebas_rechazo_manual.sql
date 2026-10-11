@@ -1,8 +1,24 @@
+-- ============================================================================
+-- RETO 1 MÍO | PRUEBAS DE OPERACIONES PROHIBIDAS
+-- ============================================================================
+-- Archivo: 05_pruebas_rechazo_manual.sql
+-- Tipo: Casos manuales comentados
+-- Base de datos: reto_1_mio | Motor: MySQL >= 8.0.16
+-- Propósito: Verificar que las restricciones rechazan operaciones inválidas.
+-- Ejecución: Ejecutar cada bloque por separado, sin los delimitadores de comentario; terminar con ROLLBACK.
+-- Si ya completaste la instalación anterior, esta reorganización de archivos
+-- no requiere ejecutar de nuevo el esquema, los triggers ni los datos.
+-- ============================================================================
+
 -- Casos independientes, comentados para no ejecutar errores deliberados en lote.
 -- Copiar cada bloque SIN los delimitadores /* */ a una pestaña de Workbench.
 -- Ejecutar hasta la sentencia que debe fallar; después ejecutar ROLLBACK por separado.
 -- No ejecutar con otra transacción abierta. Exclusivamente reto_1_mio.
 
+
+-- ----------------------------------------------------------------------------
+-- 01 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -11,6 +27,10 @@ DELETE FROM ubicaciones WHERE nombre = 'Almacén';
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 02 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -19,6 +39,10 @@ UPDATE ubicaciones SET nombre = 'Otro almacén' WHERE nombre = 'Almacén';
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 03 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -31,6 +55,10 @@ INSERT INTO historico_ubicaciones (id_equipamiento, id_ubicacion) VALUES (@equip
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 04 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -44,6 +72,10 @@ WHERE id_equipamiento = @equipo;
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 05 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -54,6 +86,10 @@ VALUES ('   ', 'Prueba', 'Demo', 'Demo', 'OTROS', @almacen);
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 06 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -66,6 +102,10 @@ INSERT INTO notificaciones (titulo, descripcion, id_usuario) VALUES ('Prueba', '
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 07 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;
@@ -81,6 +121,10 @@ DELETE FROM notificaciones WHERE id_notificacion = @aviso;
 ROLLBACK;
 */
 
+
+-- ----------------------------------------------------------------------------
+-- 08 | Caso de rechazo: ejecutar individualmente
+-- ----------------------------------------------------------------------------
 /*
 USE reto_1_mio;
 START TRANSACTION;

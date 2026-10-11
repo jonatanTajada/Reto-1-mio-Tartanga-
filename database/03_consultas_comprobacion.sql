@@ -1,5 +1,21 @@
+-- ============================================================================
+-- RETO 1 MÍO | CONSULTAS DE COMPROBACIÓN
+-- ============================================================================
+-- Archivo: 03_consultas_comprobacion.sql
+-- Tipo: Consultas de lectura
+-- Base de datos: reto_1_mio | Motor: MySQL >= 8.0.16
+-- Propósito: Inspeccionar tablas, triggers, inventario e integridad del histórico.
+-- Ejecución: Después de cargar los datos. No altera filas; se puede repetir.
+-- Si ya completaste la instalación anterior, esta reorganización de archivos
+-- no requiere ejecutar de nuevo el esquema, los triggers ni los datos.
+-- ============================================================================
+
 -- Solo lectura; no muestra hashes de contraseñas.
 USE reto_1_mio;
+
+-- ----------------------------------------------------------------------------
+-- 01 | Estructura y recuentos
+-- ----------------------------------------------------------------------------
 SHOW TABLES;
 SHOW TRIGGERS;
 SELECT 'usuarios' AS tabla, COUNT(*) AS filas FROM usuarios
@@ -8,6 +24,10 @@ UNION ALL SELECT 'equipamientos', COUNT(*) FROM equipamientos
 UNION ALL SELECT 'historico_ubicaciones', COUNT(*) FROM historico_ubicaciones
 UNION ALL SELECT 'notificaciones', COUNT(*) FROM notificaciones;
 -- En instalación nueva + datos demo: 3, 4, 5, 7, 3 filas, respectivamente.
+
+-- ----------------------------------------------------------------------------
+-- 02 | Contenido e inventario
+-- ----------------------------------------------------------------------------
 SELECT id_usuario, nombre_usuario, rol FROM usuarios ORDER BY id_usuario;
 SELECT e.id_equipamiento, e.nombre, e.marca, e.modelo, e.categoria,
        u.nombre AS ubicacion_actual
@@ -21,6 +41,10 @@ SELECT n.titulo, n.estado, u.nombre_usuario AS creador
 FROM notificaciones n JOIN usuarios u USING (id_usuario)
 ORDER BY n.id_notificacion;
 SELECT * FROM equipamientos WHERE categoria = 'PORTATIL';
+
+-- ----------------------------------------------------------------------------
+-- 03 | Integridad: cuatro resultados sin filas
+-- ----------------------------------------------------------------------------
 -- Las cuatro consultas siguientes deben devolver CERO filas.
 SELECT e.id_equipamiento, COUNT(h.id_historico) AS abiertos
 FROM equipamientos e LEFT JOIN historico_ubicaciones h

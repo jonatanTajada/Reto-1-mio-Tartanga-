@@ -43,3 +43,9 @@ No se añade vínculo notificación–equipamiento: el texto pide avisos relacio
 - Rubrica DWS RA7+RA9 (15%): planificar servicio web e integración funcional externa; no darlo por completo solo por devolver JSON.
 - No hay rúbricas independientes de cliente, despliegue y ciberseguridad en la copia; revisar entregas de Moodle.
 - El mapa mental se entrega como fuente Markdown. No se instala Markmap ni se cargan scripts remotos.
+
+## Organización de scripts y evidencias nuevas
+
+A petición del usuario se separan triggers en 01b, manteniendo esquema en 01 y DML de demostración en 02. Almacén permanece como dato inicial obligatorio junto al esquema, porque no es un dato de prueba. DDL/DML describen tipos de sentencias; la separación por archivos es una convención de organización, no un requisito del motor ni de la rúbrica. No se cambia lógica ni se reejecuta instalación.
+
+Las capturas del usuario confirman instalación original, carga y consultas de integridad sin inconsistencias; 04 llegó a ROLLBACK. El usuario comunica funcionamiento correcto. No hay evidencia visual de nueve PASS ni de rechazos individuales. La advertencia sobre BINARY se conserva pendiente porque ahora solo se solicitan comentarios y organización.

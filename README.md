@@ -6,7 +6,9 @@ Proyecto individual de aprendizaje de DAW. Permite preparar una aplicación para
 
 ## Estado real
 
-Bloque 1: scripts y documentación de base de datos preparados para revisión. **SQL pendiente de ejecución en MySQL**: el cliente local es MySQL 8.0.43 y el servicio MySQL80 está activo, pero la conexión sin credenciales fue rechazada. No se ha podido comprobar si `reto_1_mio` existe.
+Bloque 1: instalación original y datos ejecutados por el usuario en Workbench. Sus capturas confirman cinco tablas, siete triggers, consultas de inconsistencias sin filas y ejecución transaccional terminada con ROLLBACK sin errores SQL. El usuario comunica funcionamiento correcto; los nueve valores PASS/FAIL y los rechazos individuales no tienen evidencia visual registrada.
+
+Se han separado los triggers en `01b_crear_triggers.sql` y mejorado las cabeceras, sin cambiar lógica. **La base existente no necesita ninguna ejecución por esta reorganización.** La nueva disposición no se ha instalado de nuevo en MySQL.
 
 Backend, frontend y despliegue pendientes. Todavía no hay aplicación web ejecutable ni login implementado. La revisión estática no sustituye las pruebas con el servidor.
 
@@ -25,6 +27,7 @@ Los controllers coordinarán peticiones, validación y autorización; los modelo
 database/
   00_comprobar_entorno.sql
   01_crear_esquema.sql
+  01b_crear_triggers.sql
   02_datos_prueba.sql
   03_consultas_comprobacion.sql
   04_pruebas_transaccionales.sql
@@ -47,7 +50,7 @@ En el bloque 2 se definirán `controller`, `model`, `dao` y `config`; en el bloq
 2. Abrir la conexión local de Workbench y autenticarte en su diálogo; no enviar contraseñas ni tokens por chat.
 3. Abrir primero [database/00_comprobar_entorno.sql](database/00_comprobar_entorno.sql). Es de solo lectura.
 4. Si `reto_1_mio` ya existe, inspeccionar su contenido y detener la instalación inicial. No sustituirlo ni borrar datos.
-5. Si no existe, ejecutar `01_crear_esquema.sql` con detención al primer error. Después `02_datos_prueba.sql` una sola vez y `03_consultas_comprobacion.sql`.
+5. Si no existe, ejecutar `01_crear_esquema.sql` con detención al primer error. Después `01b_crear_triggers.sql`, `02_datos_prueba.sql` una sola vez y `03_consultas_comprobacion.sql`.
 6. Seguir las [instrucciones completas y resultados esperados](database/docs/PRUEBAS_Y_WORKBENCH.md) para las pruebas 04 y 05.
 
 Los scripts de trabajo solo usan `reto_1_mio`; no contienen instrucciones para eliminar bases. Las credenciales SQL reales se configurarán localmente en el bloque 2 y no se publicarán. Los usuarios ficticios del script de prueba son cuentas de la futura aplicación, no cuentas de MySQL.

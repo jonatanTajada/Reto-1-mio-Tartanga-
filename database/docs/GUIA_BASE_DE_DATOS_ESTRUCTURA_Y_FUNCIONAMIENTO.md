@@ -4,7 +4,9 @@
 
 `reto_1_mio` centraliza los usuarios de la futura aplicación, el inventario de equipamientos, las ubicaciones del centro y los avisos de mantenimiento. También conserva el recorrido de cada equipamiento mientras este exista. Es una base exclusiva para esta versión individual.
 
-Estado: diseño y scripts preparados; **no ejecutados en MySQL** por falta de autenticación disponible. La verificación del hash de demostración con PHP sí se ha ejecutado. No hay backend ni frontend todavía.
+Estado: instalación original y datos ejecutados por el usuario en Workbench. Sus capturas muestran cinco tablas, siete triggers, consultas de inconsistencias sin filas y ejecución transaccional terminada con ROLLBACK sin errores SQL. El usuario comunica funcionamiento correcto; no se han visto los nueve valores PASS/FAIL ni los rechazos individuales. No hay backend ni frontend todavía.
+
+La separación de triggers conserva la lógica. Si ya existe la instalación, no ejecutar de nuevo esquema, triggers ni datos por esta reorganización.
 
 ## 2. Archivos y fuentes
 
@@ -13,7 +15,8 @@ Los originales están en `Documentacion/DB/Reto1_DB.sql` y `Reto1_Inserts.sql`, 
 | Archivo de trabajo | Función |
 |---|---|
 | `00_comprobar_entorno.sql` | Consultar versión, existencia de base, tablas y triggers sin modificar nada |
-| `01_crear_esquema.sql` | Crear base, cinco tablas, restricciones y siete triggers |
+| `01_crear_esquema.sql` | Crear base, cinco tablas, restricciones y Almacén obligatorio |
+| `01b_crear_triggers.sql` | Crear los siete triggers antes de los datos |
 | `02_datos_prueba.sql` | Insertar usuarios y datos ficticios, con traslados y distintos estados |
 | `03_consultas_comprobacion.sql` | Mostrar contenido e identificar inconsistencias mediante consultas de lectura |
 | `04_pruebas_transaccionales.sql` | Verificar comportamientos permitidos y deshacer sus filas con ROLLBACK |
@@ -86,7 +89,7 @@ Si se elimina físicamente el equipo desaparece su histórico. Es el comportamie
 
 **Abrir primero `database/00_comprobar_entorno.sql`.** Conectar con la cuenta SQL en Workbench, sin compartir su contraseña en el chat.
 
-Si la base ya existe, consultar sus tablas y contenido y detenerse. Si no existe, ejecutar `01` una sola vez y configurar Workbench para detenerse al error. Después ejecutar `02` una vez, `03`, `04` y los bloques de `05` según su guía.
+Si la base ya existe, consultar sus tablas y contenido y detenerse. Si no existe, ejecutar `01` una sola vez y configurar Workbench para detenerse al error. Después ejecutar `01b_crear_triggers.sql` una vez y `02` una vez, `03`, `04` y los bloques de `05` según su guía.
 
 El esquema no es una migración ni un script idempotente. CREATE DATABASE fallará si existe; no continuar tras ese error. MySQL realiza commits implícitos en DDL, por lo que envolver la creación de tablas en una transacción no permitiría deshacer toda una instalación parcial. No se elimina ni reinicia la base automáticamente.
 
@@ -96,7 +99,7 @@ Tres cuentas ficticias: `admin_demo`, `conserje_demo`, `conserje_dos_demo`. La c
 
 Después de una instalación nueva y `02`: 3 usuarios, 4 ubicaciones contando Almacén, 5 equipamientos (una categoría de cada tipo), 7 intervalos y 3 avisos (uno de cada estado). Se recuperan IDs por claves únicas y LAST_INSERT_ID, sin asumir que Almacén tenga ID 1.
 
-Pendientes: ejecución real del esquema y pruebas, concurrencia de traslados, configuración de cuenta SQL, permisos HTTP y decisiones de autoría de avisos. Las consultas SQL de pruebas no verifican autorización de sesión.
+Pendientes: evidencias detalladas de PASS/FAIL y rechazos, prueba de instalación con archivos separados, concurrencia de traslados, configuración de cuenta SQL, permisos HTTP y decisiones de autoría de avisos. Las consultas SQL de pruebas no verifican autorización de sesión.
 
 ## 9. Decisiones y fuentes técnicas
 

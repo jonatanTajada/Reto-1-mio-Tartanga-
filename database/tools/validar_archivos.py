@@ -28,7 +28,8 @@ for sql in sorted(database.glob('*.sql')):
 
 schema = (database / '01_crear_esquema.sql').read_text(encoding='utf-8')
 tables = re.findall(r'CREATE TABLE (\w+)', schema)
-triggers = re.findall(r'CREATE TRIGGER (\w+)', schema)
+trigger_sql = (database / '01b_crear_triggers.sql').read_text(encoding='utf-8')
+triggers = re.findall(r'CREATE TRIGGER (\w+)', trigger_sql)
 if len(tables) != 5 or len(triggers) != 7:
     errors.append('Recuento inesperado de tablas o triggers')
 
@@ -47,4 +48,4 @@ print(f'Documentos con enlaces revisados: {len(documents)}')
 if errors:
     print('\n'.join(errors))
     sys.exit(1)
-print('PASS: revisión estática de archivos. Ejecución SQL pendiente.')
+print('PASS: revisión estática de archivos. Instalación de los archivos separados no ejecutada por el agente.')

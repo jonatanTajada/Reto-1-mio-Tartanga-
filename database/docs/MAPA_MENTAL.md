@@ -50,6 +50,7 @@
 
 ### 00 — Consultar existencia
 ### 01 — Crear una vez
+### 01b — Triggers
 ### 02 — Datos ficticios
 ### 03 — Consultas de lectura
 ### 04 — Pruebas y rollback

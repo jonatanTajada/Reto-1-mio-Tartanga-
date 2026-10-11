@@ -1,3 +1,15 @@
+-- ============================================================================
+-- RETO 1 MÍO | CREACIÓN DEL ESQUEMA
+-- ============================================================================
+-- Archivo: 01_crear_esquema.sql
+-- Tipo: DDL y dato inicial obligatorio
+-- Base de datos: reto_1_mio | Motor: MySQL >= 8.0.16
+-- Propósito: Crear reto_1_mio, sus cinco tablas, claves, índices y restricciones.
+-- Ejecución: Después de 00, solo si la base no existe. Luego ejecutar 01b. No repetir sobre la base creada.
+-- Si ya completaste la instalación anterior, esta reorganización de archivos
+-- no requiere ejecutar de nuevo el esquema, los triggers ni los datos.
+-- ============================================================================
+
 -- Instalación inicial, una sola vez, tras 00_comprobar_entorno.sql.
 -- MySQL >= 8.0.16. Activar en Workbench la detención al primer error.
 -- Si reto_1_mio ya existe, CREATE DATABASE falla; NO continuar.
@@ -6,6 +18,10 @@ SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_F
 CREATE DATABASE reto_1_mio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE reto_1_mio;
 
+
+-- ----------------------------------------------------------------------------
+-- 01 | Tabla usuarios
+-- ----------------------------------------------------------------------------
 CREATE TABLE usuarios (
     id_usuario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(80) NOT NULL,
@@ -21,6 +37,10 @@ CREATE TABLE usuarios (
     CONSTRAINT chk_usuario_rol CHECK (rol IN ('ADMIN', 'USER'))
 ) ENGINE=InnoDB;
 
+
+-- ----------------------------------------------------------------------------
+-- 02 | Tabla ubicaciones
+-- ----------------------------------------------------------------------------
 CREATE TABLE ubicaciones (
     id_ubicacion INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -30,9 +50,17 @@ CREATE TABLE ubicaciones (
     CONSTRAINT chk_ubicacion_descripcion CHECK (CHAR_LENGTH(TRIM(descripcion)) > 0)
 ) ENGINE=InnoDB;
 
+
+-- ----------------------------------------------------------------------------
+-- Dato de sistema | Almacén obligatorio, independiente de datos demo
+-- ----------------------------------------------------------------------------
 INSERT INTO ubicaciones (nombre, descripcion)
 VALUES ('Almacén', 'Ubicación inicial de todos los equipamientos');
 
+
+-- ----------------------------------------------------------------------------
+-- 03 | Tabla equipamientos
+-- ----------------------------------------------------------------------------
 CREATE TABLE equipamientos (
     id_equipamiento INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(120) NOT NULL,
@@ -54,6 +82,10 @@ CREATE TABLE equipamientos (
     INDEX idx_equipamientos_ubicacion_actual (id_ubicacion_actual)
 ) ENGINE=InnoDB;
 
+
+-- ----------------------------------------------------------------------------
+-- 04 | Tabla historico_ubicaciones
+-- ----------------------------------------------------------------------------
 CREATE TABLE historico_ubicaciones (
     id_historico BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     id_equipamiento INT UNSIGNED NOT NULL,
@@ -73,6 +105,10 @@ CREATE TABLE historico_ubicaciones (
     INDEX idx_historico_ubicacion (id_ubicacion)
 ) ENGINE=InnoDB;
 
+
+-- ----------------------------------------------------------------------------
+-- 05 | Tabla notificaciones
+-- ----------------------------------------------------------------------------
 CREATE TABLE notificaciones (
     id_notificacion INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150) NOT NULL,
@@ -89,79 +125,4 @@ CREATE TABLE notificaciones (
     INDEX idx_notificaciones_estado (estado)
 ) ENGINE=InnoDB;
 
-DELIMITER $$
-CREATE TRIGGER trg_equipamiento_ubicacion_inicial
-BEFORE INSERT ON equipamientos FOR EACH ROW
-BEGIN
-    DECLARE v_almacen INT UNSIGNED DEFAULT NULL;
-    SELECT id_ubicacion INTO v_almacen FROM ubicaciones WHERE nombre = 'Almacén';
-    IF v_almacen IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existe la ubicación obligatoria Almacén';
-    END IF;
-    SET NEW.id_ubicacion_actual = v_almacen;
-END$$
-
-CREATE TRIGGER trg_equipamiento_crear_historico
-AFTER INSERT ON equipamientos FOR EACH ROW
-BEGIN
-    INSERT INTO historico_ubicaciones (id_equipamiento, id_ubicacion)
-    VALUES (NEW.id_equipamiento, NEW.id_ubicacion_actual);
-END$$
-
-CREATE TRIGGER trg_equipamiento_traslado
-AFTER UPDATE ON equipamientos FOR EACH ROW
-BEGIN
-    DECLARE v_fecha DATETIME(6);
-    IF NEW.id_ubicacion_actual <> OLD.id_ubicacion_actual THEN
-        -- Una fecha común une ambos intervalos. GREATEST evita fechas invertidas
-        -- si el reloj del servidor retrocede respecto al intervalo abierto.
-        SELECT GREATEST(CURRENT_TIMESTAMP(6), MAX(fecha_inicio)) INTO v_fecha
-        FROM historico_ubicaciones
-        WHERE id_equipamiento = OLD.id_equipamiento AND fecha_fin IS NULL;
-        IF v_fecha IS NULL THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El equipamiento no tiene histórico abierto';
-        END IF;
-        UPDATE historico_ubicaciones SET fecha_fin = v_fecha
-        WHERE id_equipamiento = OLD.id_equipamiento AND fecha_fin IS NULL;
-        INSERT INTO historico_ubicaciones (id_equipamiento, id_ubicacion, fecha_inicio)
-        VALUES (NEW.id_equipamiento, NEW.id_ubicacion_actual, v_fecha);
-    END IF;
-END$$
-
-CREATE TRIGGER trg_no_borrar_almacen
-BEFORE DELETE ON ubicaciones FOR EACH ROW
-BEGIN
-    IF OLD.nombre = 'Almacén' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Almacén no puede eliminarse';
-    END IF;
-END$$
-
-CREATE TRIGGER trg_no_renombrar_almacen
-BEFORE UPDATE ON ubicaciones FOR EACH ROW
-BEGIN
-    IF OLD.nombre = 'Almacén' AND BINARY NEW.nombre <> BINARY OLD.nombre THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Almacén no puede renombrarse';
-    END IF;
-END$$
-
-CREATE TRIGGER trg_notificacion_solo_user
-BEFORE INSERT ON notificaciones FOR EACH ROW
-BEGIN
-    DECLARE v_rol VARCHAR(10) DEFAULT NULL;
-    SELECT rol INTO v_rol FROM usuarios WHERE id_usuario = NEW.id_usuario;
-    IF v_rol IS NULL OR v_rol <> 'USER' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El creador debe ser un usuario USER existente';
-    END IF;
-    SET NEW.estado = 'PENDIENTE';
-END$$
-
-CREATE TRIGGER trg_notificacion_no_borrar_realizada
-BEFORE DELETE ON notificaciones FOR EACH ROW
-BEGIN
-    IF OLD.estado = 'REALIZADA' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Una notificación REALIZADA no puede eliminarse';
-    END IF;
-END$$
-DELIMITER ;
-
--- No se crean cuentas SQL ni se conceden permisos globales aquí.
+-- Fin del esquema. Continuar con 01b_crear_triggers.sql en una instalación nueva.

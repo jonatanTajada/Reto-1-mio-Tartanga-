@@ -8,8 +8,11 @@ Revisión del 11/10/2026:
 - Servicio MySQL80: Running.
 - Intento TCP a 127.0.0.1:3306 con root sin contraseña: error 1045, acceso denegado.
 - Intento con la configuración disponible del cliente: error 1045, cuenta ODBC sin contraseña.
-- No se probaron contraseñas ni se modificó autenticación. No se conocen existencia ni contenido de `reto_1_mio`.
-- Ninguna sentencia de creación, inserción o prueba se ha enviado al servidor.
+- El agente no probó contraseñas ni modificó autenticación. Posteriormente el usuario ejecutó los scripts desde Workbench.
+- Las capturas confirman preflight sin base existente, creación original, datos con COMMIT y consultas de inconsistencias sin filas.
+- El script 04 llegó a ROLLBACK sin errores SQL. El usuario comunica funcionamiento correcto; faltan evidencias visuales de los valores PASS/FAIL y rechazos individuales de 05.
+- El trigger de renombrado mostró una advertencia de BINARY obsoleto; quedó creado. Esta reorganización conserva esa expresión y no resuelve la advertencia.
+- Los scripts separados se han comparado con las sentencias originales, sin reinstalar la base existente.
 - Hash demo generado con PHP y verificado mediante password_verify: true.
 - Esquema revisado estáticamente; esta revisión no acredita que MySQL lo acepte.
 
@@ -23,11 +26,11 @@ Si la base existe, detenerse. Para conocer sus filas, ejecutar SELECT COUNT(*) d
 
 ## 2. Instalación nueva
 
-En Workbench, activar la opción **Stop Script Execution On Errors**. Abrir `01_crear_esquema.sql` como script SQL y ejecutarlo completo, respetando DELIMITER. Se necesita una cuenta con permisos para crear la base, tablas, índices y triggers; algunos servidores con binlog imponen permisos adicionales para triggers. No cambiar ajustes globales para evitar errores.
+En Workbench, activar la opción **Stop Script Execution On Errors**. Abrir `01_crear_esquema.sql` como script SQL y ejecutarlo completo, Después ejecutar `01b_crear_triggers.sql` completo, respetando DELIMITER. Se necesita una cuenta con permisos para crear la base, tablas, índices y triggers; algunos servidores con binlog imponen permisos adicionales para triggers. No cambiar ajustes globales para evitar errores.
 
-Esperado: cinco tablas y siete triggers. Si hay un error, detenerse y conservar el mensaje y el estado parcial. CREATE DATABASE y CREATE TABLE implican commits; no se promete ROLLBACK de toda la instalación. No reejecutar ignorando errores ni borrar objetos automáticamente.
+Esperado: cinco tablas tras 01 y siete triggers tras 01b. Si hay un error, detenerse y conservar el mensaje y el estado parcial. CREATE DATABASE y CREATE TABLE implican commits; no se promete ROLLBACK de toda la instalación. No reejecutar ignorando errores ni borrar objetos automáticamente.
 
-Después abrir `02_datos_prueba.sql`, una sola vez. Usa una transacción: si falla, ejecutar ROLLBACK inmediatamente, en esa misma conexión, antes de continuar. No ejecutar COMMIT tras errores. Repetirlo producirá duplicados en claves únicas; no usa INSERT IGNORE ni sobrescribe filas existentes.
+Tras crear los triggers con `01b_crear_triggers.sql`, abrir `02_datos_prueba.sql`, una sola vez. Usa una transacción: si falla, ejecutar ROLLBACK inmediatamente, en esa misma conexión, antes de continuar. No ejecutar COMMIT tras errores. Repetirlo producirá duplicados en claves únicas; no usa INSERT IGNORE ni sobrescribe filas existentes.
 
 ## 3. Inspección de lectura
 

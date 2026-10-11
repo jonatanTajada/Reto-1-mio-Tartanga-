@@ -8,4 +8,4 @@ La documentación técnica principal vive junto a los scripts:
 - [Modelo editable](../../database/docs/MODELO_ENTIDAD_RELACION.md).
 - [Mapa mental](../../database/docs/MAPA_MENTAL.md).
 
-Estado: preparada para revisión, ejecución SQL pendiente de autenticación local.
+Estado: instalación original ejecutada por el usuario; triggers separados sin reinstalar. Ver la guía de pruebas para evidencias y pendientes.
