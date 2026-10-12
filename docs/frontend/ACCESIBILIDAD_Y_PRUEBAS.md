@@ -2,6 +2,8 @@
 
 Evidencia del 11/10/2026. La aplicación se probó con la API PHP y MySQL reales. No se utilizaron mocks como sustituto de integración.
 
+Revisión adicional 12/10: 12 comprobaciones específicas de perfil/controles en dos perfiles Chrome, incluido un 403 por cambio de rol con formulario abierto. [Informe del caso](../backend/REVISION_PERMISOS_UBICACIONES.md). Las 32 comprobaciones generales del bloque anterior no se repitieron íntegramente en esta revisión.
+
 ## Pruebas realizadas
 
 | Herramienta | Comprobación | Resultado |

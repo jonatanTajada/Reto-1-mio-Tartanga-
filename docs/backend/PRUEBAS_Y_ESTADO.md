@@ -2,6 +2,8 @@
 
 Fecha: 11/10/2026. Estas evidencias distinguen archivos implementados de funcionamiento ejecutado.
 
+Actualización 12/10/2026: [revisión de permisos de ubicaciones](REVISION_PERMISOS_UBICACIONES.md). Ejecutados 44 HTTP específicos, 12 controles Chrome independientes, regresión de 118 HTTP y ocho controles de integridad. El registro del 11/10 siguiente conserva sus cifras históricas; no se afirma haber repetido hoy toda la prueba UI de aquel bloque.
+
 ## Ejecutado por el agente
 
 - PHP 8.4.25: comprobación `php -l` de los 28 archivos PHP iniciales y del nuevo comprobador de integridad, sin errores de sintaxis (29 archivos PHP del proyecto, sin contar la configuración privada).

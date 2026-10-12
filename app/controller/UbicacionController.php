@@ -15,6 +15,8 @@ final class UbicacionController
 
     public function ejecutar(string $metodo, ?int $id): array
     {
+        // Consultar una ubicación y trasladar un equipo son acciones distintas.
+        // Este permiso usa el rol actual de MySQL, no el nombre de usuario ni un dato del formulario.
         Sesion::usuario($this->usuarios, $metodo === 'GET' ? null : 'ADMIN');
         if ($metodo === 'GET') {
             return $id === null ? $this->dao->listar() : $this->exigir($id);

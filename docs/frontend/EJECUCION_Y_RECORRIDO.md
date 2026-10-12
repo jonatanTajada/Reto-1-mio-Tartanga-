@@ -23,6 +23,8 @@ Están documentadas también en [endpoints del backend](../backend/ENDPOINTS.md)
 
 Solo para demostración local; no son usuarios/contraseñas de MySQL. No se publican las credenciales reales del servidor.
 
+El rol efectivo es el de MySQL, no el nombre de cuenta. El 12/10 se restableció `conserje_demo` a USER tras detectarlo como ADMIN. Recarga o pulsa Actualizar para reflejarlo. Para probar ambos roles simultáneamente utiliza perfiles/navegadores separados; las pestañas de un mismo perfil comparten sesión.
+
 ## Recorrido del Administrador
 
 1. Acceder e inspeccionar inventario, categoría y detalle/historial de un equipo.
@@ -55,3 +57,5 @@ php tools/comprobar_integridad.php
 El cliente Chrome necesita Node 22 o posterior y Chrome instalado en la ruta Windows documentada en el script; `RETO_CHROME` permite indicar otra ruta local. Usa CDP nativo, sin instalar Playwright, Selenium o librerías. Abre un perfil propio en `var/browser`, excluido de Git, sin una ventana visible, y termina su proceso al acabar. Las capturas se guardan en `docs/frontend/evidencias`.
 
 Las pruebas crean filas ficticias `http_test_` y `ui_test_`, comparan datos anteriores y limpian solo sus IDs. No ejecutarlas simultáneamente ni mientras otros usuarios escriben. Si se interrumpen a la fuerza, la limpieza puede quedar pendiente: conservar la salida y revisar solo los IDs de esa ejecución, sin borrar tablas ni restablecer secuencias.
+
+Pruebas específicas del caso de Ubicaciones: `python tools/probar_permisos_ubicaciones.py` y `node tools/probar_sesiones_ubicaciones.mjs`. El segundo utiliza dos perfiles Chrome independientes y una cuenta temporal para comprobar la respuesta de la interfaz al cambio de rol. No elimina «I+D+I».

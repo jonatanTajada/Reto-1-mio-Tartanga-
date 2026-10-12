@@ -14,6 +14,8 @@ Hay cinco intentos de login por sesión en cinco minutos y un mensaje común par
 
 ## Permisos y reglas
 
+El permiso depende de `usuarios.rol`, no del nombre de login. Se comprobó un caso en el que `conserje_demo` tenía ADMIN; [la revisión](REVISION_PERMISOS_UBICACIONES.md) restablece su definición ficticia USER y prueba las operaciones con sesiones independientes. ADMIN hace CRUD de ubicaciones; USER solo consulta y traslada equipos mediante otra ruta. Dos pestañas de un perfil comparten cookie.
+
 Los controladores comprueban rol antes de validar y escribir datos. USER no puede crear/editar/borrar equipamientos; ADMIN no puede trasladarlos. Avisos: USER propio, ADMIN lectura general y edición de estado. Esta propiedad es una interpretación provisional registrada en las dudas, no un requisito literal claro.
 
 La edición de datos y el traslado tienen rutas, campos y permisos distintos. Los campos adicionales provocan 422: no se ignora una tentativa de cambiar rol, estado, autor o ubicación mediante otro formulario.

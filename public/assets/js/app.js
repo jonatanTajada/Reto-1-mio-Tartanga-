@@ -42,7 +42,24 @@ function manejarError(error) {
     mostrarAcceso('Tu sesión ha caducado o ya no es válida. Inicia sesión de nuevo.');
     // Obtener un CSRF nuevo sin repetir automáticamente ninguna operación de escritura.
     conectar(false);
-  } else if (error.estado === 403) pedir('/sesion').catch(() => {});
+  } else if (error.estado === 403) actualizarIdentidad();
+}
+
+async function actualizarIdentidad() {
+  try {
+    const sesion = await pedir('/sesion');
+    if (!sesion.usuario) { mostrarAcceso('Inicia sesión para continuar.'); return; }
+    const cambio = usuario && (usuario.id_usuario !== sesion.usuario.id_usuario || usuario.rol !== sesion.usuario.rol);
+    usuario = sesion.usuario; ajustarRol();
+    // Si la cuenta o su rol cambió, no conservar un formulario abierto con permisos antiguos.
+    if (cambio) {
+      if (porId('dialogo').open) porId('dialogo').close();
+      await cargar(false);
+    }
+  } catch (error) {
+    if (error.estado === 401) mostrarAcceso('La sesión ya no es válida. Inicia sesión de nuevo.');
+    else mensaje('No se pudo verificar el perfil actual. Pulsa Actualizar para reintentarlo.', true);
+  }
 }
 
 const contexto = {
@@ -57,7 +74,9 @@ const contexto = {
 };
 
 function permisoAlta() {
-  return seccion === 'notificaciones' ? usuario.rol === 'USER' : usuario.rol === 'ADMIN';
+  // El nombre de cuenta no concede permisos: manda el rol efectivo devuelto por PHP.
+  const rolesAlta = { equipamientos: 'ADMIN', ubicaciones: 'ADMIN', notificaciones: 'USER', usuarios: 'ADMIN' };
+  return Boolean(usuario && rolesAlta[seccion] === usuario.rol);
 }
 
 async function cargar(enfocar = true) {
@@ -126,7 +145,9 @@ porId('form-login').addEventListener('submit', async evento => {
   porId('entrar').textContent = 'Iniciando sesión…';
   try {
     const sesion = await pedir('/login', 'POST', { nombre_usuario: porId('login-usuario').value.trim(), password: porId('login-password').value });
-    usuario = sesion.usuario; porId('login-password').value = ''; mensaje('Sesión iniciada.'); ajustarRol(); await cargar();
+    usuario = sesion.usuario; porId('login-password').value = '';
+    mensaje(`Sesión iniciada: ${usuario.nombre_usuario} · ${roles[usuario.rol]}.`);
+    ajustarRol(); await cargar();
   } catch (error) { porId('error-login').textContent = error.message; porId('login-password').focus(); }
   finally { porId('entrar').disabled = false; porId('entrar').textContent = 'Iniciar sesión'; }
 });

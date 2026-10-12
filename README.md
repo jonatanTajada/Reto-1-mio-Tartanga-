@@ -6,6 +6,8 @@ Proyecto individual de aprendizaje de DAW. Aplicación para gestionar usuarios, 
 
 ## Estado real
 
+Revisión 12/10/2026: `conserje_demo` tenía rol ADMIN en MySQL; se restableció su rol original USER. Ubicaciones mantiene CRUD ADMIN y consulta USER, conservando el traslado de equipos. Probados 44 HTTP del caso, 12 controles Chrome con perfiles independientes y 118 HTTP de regresión. «I+D+I» y datos anteriores conservados. [Informe y límites](docs/backend/REVISION_PERMISOS_UBICACIONES.md).
+
 Bloque 1: instalación original y datos ejecutados por el usuario en Workbench. Sus capturas confirman cinco tablas, siete triggers, consultas de inconsistencias sin filas y ejecución transaccional terminada con ROLLBACK sin errores SQL. El usuario comunica funcionamiento correcto; los nueve valores PASS/FAIL y los rechazos individuales no tienen evidencia visual registrada.
 
 Se han separado los triggers en `01b_crear_triggers.sql` y mejorado las cabeceras, sin cambiar lógica. **La base existente no necesita ninguna ejecución por esta reorganización.** La nueva disposición no se ha instalado de nuevo en MySQL.

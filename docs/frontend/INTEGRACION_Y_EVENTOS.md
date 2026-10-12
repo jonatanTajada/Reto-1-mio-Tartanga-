@@ -31,6 +31,8 @@ El navegador comprueba campos obligatorios y límites. JavaScript rechaza texto 
 
 Se muestran mensajes legibles para errores del API. Un fallo de red ofrece Actualizar/reintento; no repite automáticamente escrituras. Si el guardado terminó pero la lectura posterior falla, no se invita a duplicar el alta. Si la sesión desaparece o recibe 401, se vuelve al acceso y se obtiene un token nuevo. Un 403 se comunica sin convertirlo en éxito ni intentar la operación con otro rol.
 
+Tras un 403 se relee la identidad efectiva, se actualiza el perfil y, si cambió cuenta/rol, se cierra el formulario antiguo y se recargan los controles. Login muestra nombre y rol, para evitar confundir una cuenta denominada conserje con un rol ADMIN guardado en MySQL. La [revisión de ubicaciones](../backend/REVISION_PERMISOS_UBICACIONES.md) contiene una prueba real de este cambio de rol.
+
 ## Ajustes PHP para la integración
 
 GET `/` y `/index.html` sirven la vista inicial; las rutas `/api/...` siguen usando el MVC existente. El router permite los CSS/JS locales previstos. La vista inicial añade CSP para scripts/estilos/conexiones del mismo origen, sin inline JavaScript ni recursos remotos. `.htaccess` se adapta también, pero su ejecución en Apache queda pendiente.

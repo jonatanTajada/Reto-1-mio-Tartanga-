@@ -1,6 +1,20 @@
 # Plan y estado
 
-Fecha de revisión: 11 de octubre de 2026.
+Fecha de revisión: 12 de octubre de 2026.
+
+## Revisión posterior — Permisos de Ubicaciones
+
+- [x] Revisar ODT/enunciado/rúbrica y controlador: CRUD ADMIN; consulta/traslado USER.
+- [x] Diagnóstico previo: cuenta `conserje_demo` tenía ADMIN; sesión reciente ID 2.
+- [x] Restablecer solo su rol demo USER; conservar «I+D+I» y datos anteriores.
+- [x] Mapa de permisos, guardia de formulario, identificación en login y sincronización de perfil tras 403.
+- [x] 44 respuestas HTTP del caso con cookies independientes y comparación tras cada rechazo.
+- [x] 12 comprobaciones Chrome en perfiles separados, incluido cambio de rol con formulario abierto.
+- [x] Regresión general: 118 respuestas HTTP; ocho controles finales de integridad correctos.
+- [x] Conservar corrección local del selector CSS `button:disabled`.
+- [ ] Revisión del usuario. No avanzar a otro bloque.
+
+Ver [informe del caso](backend/REVISION_PERMISOS_UBICACIONES.md). No se reinstaló la base ni se borró la ubicación reportada. El cambio de rol no puede atribuirse retrospectivamente sin auditoría.
 
 ## Bloque 1 — Base de datos
 

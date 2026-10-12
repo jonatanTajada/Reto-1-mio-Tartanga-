@@ -40,7 +40,7 @@ button {
   cursor: pointer;
 }
 
-button: disabled {;
+button:disabled {
   cursor: wait;
   opacity: .65;
 }

@@ -1,5 +1,11 @@
 # Dudas, mejoras y decisiones
 
+## Revisión de Ubicaciones — 12/10/2026
+
+La regla oficial es inequívoca: CRUD ADMIN; consulta y traslado de equipos USER. MySQL tenía `conserje_demo` con ADMIN y la sesión autenticada más reciente apuntaba a esa cuenta. Se restableció su rol de demostración USER, sin modificar «I+D+I» ni el resto de datos existentes. No se ha reproducido autorización de escritura con USER; no hay auditoría para atribuir el cambio de rol o la creación anterior a una persona o acción concreta.
+
+Se refuerzan permisos explícitos y guardia del formulario en el cliente, identidad visible en login y sincronización tras 403. El servidor ya exigía ADMIN. Las pestañas de un perfil comparten cookie y no son sesiones independientes. Véanse [diagnóstico, pruebas y límites](backend/REVISION_PERMISOS_UBICACIONES.md): 44 respuestas del caso, 12 comprobaciones Chrome, 118 respuestas de regresión y ocho controles de integridad correctos. Esta revisión no crea una regla de permisos basada en el nombre de cuenta.
+
 Solo se han utilizado documentos de `Documentacion` dentro de la carpeta individual. Se conservan sin modificaciones. Las decisiones siguientes no reescriben el material de clase.
 
 ## Contradicciones e interpretaciones
