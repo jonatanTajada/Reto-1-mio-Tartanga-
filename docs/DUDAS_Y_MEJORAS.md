@@ -1,5 +1,13 @@
 # Dudas, mejoras y decisiones
 
+## Rediseño — 14/10/2026
+
+Se revisaron las reglas oficiales y se mantuvo el criterio anterior ante contradicciones de avisos: estado ADMIN; contenido y borrado no REALIZADA por USER propietario. No se inventa una excepción visual ni se cambia la autorización del servidor.
+
+El nuevo diseño elimina estadísticas y sidebar para todos, adopta navegación horizontal y lenguaje por tareas. Errores asociados, retorno del foco por clave de acción, mensajes dentro del flujo y resultados después de cerrar el diálogo. Formularios de una columna; tabla semántica en región desplazable.
+
+44 comprobaciones con teclado nativo y 420 pasos Tab; 12 perfiles independientes; 44 HTTP del caso y 118 de regresión. Texto 200%, reflujo equivalente 400% y protanopia/deuteranopia/tritanopia comprobados técnicamente, con capturas revisadas. No se afirma zoom nativo, prueba con lector de pantalla, participación de personas ni conformidad WCAG completa. axe-core no estaba disponible y no se instaló. RA9 externo, despliegue y demás dudas anteriores siguen pendientes.
+
 ## Revisión de Ubicaciones — 12/10/2026
 
 La regla oficial es inequívoca: CRUD ADMIN; consulta y traslado de equipos USER. MySQL tenía `conserje_demo` con ADMIN y la sesión autenticada más reciente apuntaba a esa cuenta. Se restableció su rol de demostración USER, sin modificar «I+D+I» ni el resto de datos existentes. No se ha reproducido autorización de escritura con USER; no hay auditoría para atribuir el cambio de rol o la creación anterior a una persona o acción concreta.

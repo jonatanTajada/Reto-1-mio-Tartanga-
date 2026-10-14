@@ -3,83 +3,60 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Inventario y gestión del equipamiento del centro educativo.">
-  <title>Inventario del centro · Reto 1 mío</title>
+  <meta name="description" content="Consulta y gestión del material del centro educativo.">
+  <title>Material del centro · Tartanga</title>
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/componentes.css">
   <link rel="stylesheet" href="/assets/css/pantallas.css">
   <script type="module" src="/assets/js/app.js"></script>
 </head>
 <body>
-  <noscript><p class="aviso-regla">Esta aplicación necesita JavaScript para comunicarse con el servidor. Actívalo en tu navegador para continuar.</p></noscript>
-  <!-- La vista HTML no decide permisos de servidor ni consulta directamente MySQL. -->
-  <a class="saltar" href="#contenido">Saltar al contenido</a>
-  <div id="mensajes" class="mensajes" role="status" aria-live="polite" aria-atomic="true"></div>
+  <a class="saltar" href="#contenido">Saltar al contenido principal</a>
+  <noscript><p class="aviso-regla">Activa JavaScript en tu navegador para utilizar la aplicación.</p></noscript>
+  <!-- Regiones estables: anuncian cada resultado una vez, sin cubrir controles. -->
+  <div class="avisos-pagina">
+    <div id="mensajes" class="mensajes" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="errores" class="mensajes error" role="alert" aria-atomic="true"></div>
+  </div>
   <section id="acceso" class="acceso" aria-labelledby="titulo-acceso">
-    <div class="presentacion">
-      <div class="marca"><span class="marca-icono" aria-hidden="true">T</span><span>Tartanga <small>Inventario del centro</small></span></div>
-      <div>
-        <p class="ceja">CADA EQUIPO, EN SU LUGAR</p>
-        <h1>Todo el inventario.<br>Un mismo espacio.</h1>
-        <p>Consulta el equipamiento, sigue sus ubicaciones y mantén al día los avisos del centro.</p>
-        <svg class="ilustracion" viewBox="0 0 440 220" role="img" aria-label="Ilustración de un portátil, un monitor y cajas de equipamiento">
-          <rect x="55" y="35" width="230" height="135" rx="12" fill="#314864"/>
-          <rect x="66" y="46" width="208" height="112" rx="5" fill="#ddece9"/>
-          <rect x="87" y="64" width="92" height="13" rx="4" fill="#0c7464"/>
-          <rect x="87" y="88" width="165" height="7" rx="3" fill="#9bb9b3"/>
-          <rect x="87" y="106" width="133" height="7" rx="3" fill="#9bb9b3"/>
-          <path d="M145 170h50l10 22h-70z" fill="#8295aa"/>
-          <rect x="258" y="116" width="138" height="82" rx="7" fill="#0c7464"/>
-          <rect x="267" y="125" width="120" height="63" rx="3" fill="#edfaf5"/>
-          <path d="M244 198h165l-10 9H254z" fill="#aaccc3"/>
-          <rect x="15" y="155" width="76" height="52" rx="4" fill="#d8b68b"/>
-          <path d="M45 155h16v20H45z" fill="#f4dfc5"/>
-        </svg>
-      </div>
-      <p class="nota-presentacion">Gestión de equipamientos · Proyecto DAW</p>
-    </div>
-    <div class="zona-login" id="contenido" tabindex="-1">
-      <div class="tarjeta-login">
-        <p class="ceja">BIENVENIDO</p>
-        <h2 id="titulo-acceso">Inicia sesión</h2>
-        <p class="muted">Accede con tu cuenta del centro.</p>
-        <form id="form-login">
-          <div class="campo"><label for="login-usuario">Nombre de usuario</label><input id="login-usuario" name="nombre_usuario" required maxlength="60" autocomplete="username"></div>
-          <div class="campo"><label for="login-password">Contraseña</label><input id="login-password" name="password" type="password" required autocomplete="current-password" aria-describedby="ayuda-login"></div>
-          <p id="ayuda-login" class="ayuda">Tus permisos dependen de tu rol: Administrador o Conserje.</p>
-          <p id="error-login" class="error-form" role="alert"></p>
-          <button id="entrar" class="boton primario ancho" type="submit" disabled>Conectando…</button>
-        </form>
-        <button id="reconectar" class="boton secundario ancho" hidden>Reintentar conexión</button>
-      </div>
-      <p class="pie-login">Reto 1 mío · Jonatan Tajada Rico</p>
-    </div>
+    <header class="marca-acceso"><p class="marca">Material del centro <span>Tartanga</span></p></header>
+    <main class="zona-login" id="contenido" tabindex="-1">
+      <h1 id="titulo-acceso">Entrar a tu cuenta</h1>
+      <p>Consulta los equipos y los espacios del centro, o comunica un aviso.</p>
+      <form id="form-login">
+        <div class="campo"><label for="login-usuario">Nombre de usuario</label><input id="login-usuario" name="nombre_usuario" required maxlength="60" autocomplete="username" aria-describedby="error-login"></div>
+        <div class="campo"><label for="login-password">Contraseña</label><input id="login-password" name="password" type="password" required autocomplete="current-password" aria-describedby="ayuda-login error-login"></div>
+        <p id="ayuda-login" class="ayuda">Escribe la contraseña de tu cuenta del centro.</p>
+        <p id="error-login" class="error-form" role="alert"></p>
+        <button id="entrar" class="boton primario ancho" type="submit" disabled>Conectando…</button>
+      </form>
+      <button id="reconectar" class="boton secundario ancho" hidden>Reintentar conexión</button>
+    </main>
+    <footer class="pie-login">Inventario de material · Centro educativo</footer>
   </section>
   <div id="aplicacion" class="aplicacion" hidden>
-    <aside class="lateral" aria-label="Navegación de la aplicación">
-      <div class="marca"><span class="marca-icono" aria-hidden="true">T</span><span>Tartanga <small>Inventario del centro</small></span></div>
-      <p class="ceja nav-etiqueta">ESPACIO DE TRABAJO</p>
-      <nav id="navegacion" aria-label="Principal">
-        <button class="nav-item" data-seccion="equipamientos"><span aria-hidden="true">▦</span> Inventario</button>
-        <button class="nav-item" data-seccion="ubicaciones"><span aria-hidden="true">◇</span> Ubicaciones</button>
-        <button class="nav-item" data-seccion="notificaciones"><span aria-hidden="true">◎</span> Notificaciones</button>
-        <button class="nav-item" data-seccion="usuarios" id="nav-usuarios"><span aria-hidden="true">♙</span> Usuarios</button>
-      </nav>
-      <div class="nota-rol"><p id="ayuda-rol"></p><small>Proyecto individual DAW<br>Jonatan Tajada Rico</small></div>
-    </aside>
-    <div class="area-principal">
-      <header class="barra-superior"><span class="muted">Gestión del centro</span><div class="cuenta"><span id="cuenta-nombre"></span><span id="cuenta-rol" class="etiqueta"></span><button id="salir" class="boton secundario">Cerrar sesión</button></div></header>
-      <main id="panel" tabindex="-1">
-        <div class="cabecera-panel"><div><p class="ceja">INVENTARIO INTELIGENTE</p><h1 id="titulo-panel">Inventario</h1><p id="descripcion-panel" class="muted"></p></div><button id="nuevo" class="boton primario" hidden>Nuevo equipamiento</button></div>
-        <div id="resumen" class="resumen" aria-label="Resumen del inventario" hidden></div>
-        <section class="tarjeta-lista" aria-labelledby="titulo-lista">
-          <div class="barra-lista"><h2 id="titulo-lista">Equipamientos del centro</h2><div class="filtros"><div id="filtro-categoria" class="filtro"><label for="categoria">Categoría</label><select id="categoria"><option value="">Todas las categorías</option></select></div><button id="actualizar" class="boton secundario">Actualizar</button></div></div>
-          <p id="estado-lista" class="estado-lista" role="status"></p>
-          <div id="lista" class="tabla-contenedor" role="region" aria-label="Listado" tabindex="0"></div>
-        </section>
-        <p class="pie-panel">Datos conectados al inventario del centro · Los permisos se verifican en el servidor.</p>
-      </main>
-    </div>
+    <header class="barra-superior">
+      <p class="marca">Material del centro <span>Tartanga</span></p>
+      <div class="cuenta"><span>Cuenta: <strong id="cuenta-nombre"></strong></span><span id="cuenta-rol" class="etiqueta"></span><button id="salir" class="boton secundario">Cerrar sesión</button></div>
+    </header>
+    <nav id="navegacion" aria-label="Secciones del centro">
+      <a class="nav-item" href="#equipamientos" data-seccion="equipamientos">Inventario</a>
+      <a class="nav-item" href="#ubicaciones" data-seccion="ubicaciones">Ubicaciones</a>
+      <a class="nav-item" href="#notificaciones" data-seccion="notificaciones">Avisos</a>
+      <a class="nav-item" href="#usuarios" data-seccion="usuarios" id="nav-usuarios">Usuarios</a>
+    </nav>
+    <main id="panel" tabindex="-1" aria-labelledby="titulo-panel">
+      <div class="cabecera-panel"><div><h1 id="titulo-panel">Inventario</h1><p id="descripcion-panel"></p></div><button id="nuevo" class="boton primario" hidden>Crear equipo</button></div>
+      <p id="ayuda-rol" class="ayuda-rol"></p>
+      <section class="lista-seccion" aria-labelledby="titulo-lista">
+        <div class="barra-lista"><h2 id="titulo-lista">Equipos disponibles</h2><div class="filtros"><div id="filtro-categoria" class="filtro"><label for="categoria">Filtrar por categoría</label><select id="categoria"><option value="">Todas las categorías</option></select></div><button id="actualizar" class="boton secundario">Actualizar lista</button></div></div>
+        <p id="estado-lista" class="estado-lista" role="status" aria-live="polite"></p>
+        <p id="ayuda-tabla" class="ayuda-tabla">Desplaza la tabla a los lados para ver más.</p>
+        <p id="ayuda-teclado" class="solo-lector">Con teclado, enfoca la tabla y usa las flechas para desplazarla.</p>
+        <div id="lista" class="tabla-contenedor" role="region" aria-labelledby="titulo-lista" aria-describedby="ayuda-tabla ayuda-teclado" tabindex="0"></div>
+      </section>
+    </main>
+    <footer class="pie-panel">Tartanga · Material del centro</footer>
   </div>
   <dialog id="dialogo" aria-labelledby="titulo-dialogo">
     <div class="cabecera-dialogo"><h2 id="titulo-dialogo"></h2><button id="cerrar-dialogo" class="boton secundario" aria-label="Cerrar ventana">Cerrar</button></div>

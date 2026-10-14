@@ -1,91 +1,67 @@
-# Pantallas y bocetos editables
+# Pantallas y bocetos actuales
 
-Estos bocetos describen la estructura que guía la interfaz entregada y pueden modificarse como texto. Las capturas enlazadas son evidencias del navegador, no sustituyen los bocetos ni representan una prueba humana de usabilidad.
+El [boceto previo del 14/10](BOCETO_REDISENO_2026_10_14.md) se preparó antes de cambiar la interfaz, con justificación y verificaciones previstas. Esta página describe el resultado. Los diagramas son editables como texto.
 
 ## Acceso
 
 ```text
-┌─────────────────────────────┬─────────────────────────────┐
-│ Marca y propósito           │ Bienvenido / Inicia sesión  │
-│                             │ Usuario [________________]  │
-│ Inventario del centro       │ Contraseña [_____________]  │
-│ Ilustración de equipamiento │ Ayuda del rol               │
-│                             │ [Iniciar sesión]            │
-│ Proyecto DAW                │ Error / Reintentar          │
-└─────────────────────────────┴─────────────────────────────┘
+Material del centro · Tartanga
+──────────────────────────────
+Entrar a tu cuenta
+Usuario      [_______________]
+Contraseña   [_______________]
+Ayuda y error asociado
+[Iniciar sesión]
 ```
 
-En móvil se conserva una cabecera compacta y el formulario ocupa el ancho disponible. No se muestran contraseñas de demostración en la pantalla.
+Un solo formulario, sin ilustraciones ni paneles publicitarios. No se muestran las contraseñas de prueba en la pantalla.
 
-## Espacio de trabajo
+## Conserje
 
 ```text
-┌─────────────────┬──────────────────────────────────────────┐
-│ Marca           │ Cuenta · Rol · Cerrar sesión             │
-│                 ├──────────────────────────────────────────┤
-│ Inventario      │ Título y descripción     [Nuevo registro]│
-│ Ubicaciones     │ Resumen (solo en inventario)              │
-│ Notificaciones  │ Equipos | Ubicaciones | Avisos visibles   │
-│ Usuarios ADMIN  │ Listado · Categoría · Actualizar          │
-│                 │ Tabla con datos y acciones por rol        │
-│ Ayuda del rol   │ Estado de carga, vacío o error            │
-└─────────────────┴──────────────────────────────────────────┘
+Material del centro       Cuenta · Conserje · Cerrar sesión
+─────────────────────────────────────────────────────────
+Inventario              Ubicaciones                Avisos
+─────────────────────────────────────────────────────────
+Inventario
+Consulta los equipos y su ubicación.
+Categoría [Todas]                       [Actualizar lista]
+Equipos disponibles
+Equipo | Marca/modelo | Categoría | Ubicación | Acciones
+...                            [Ver detalles] [Trasladar equipo]
 ```
 
-La navegación utiliza botones con `aria-current="page"` y fragmentos URL como `#equipamientos`. Atrás/adelante del navegador cambia de sección. El enlace de salto mueve el foco sin modificar el fragmento de navegación.
+Sin estadísticas ni tarjetas de contadores. Ubicaciones es solo consulta. Avisos permite crear/editar los propios y eliminar los no realizados; no cambiar estado. Las comprobaciones PHP permanecen.
 
-## Detalle e historial
+## Administrador
+
+Misma cabecera y navegación, añadiendo Usuarios. Inventario permite Crear equipo, Editar equipo y Eliminar equipo; no trasladar. Ubicaciones tiene CRUD, con Almacén protegido. Avisos muestra todos y permite Cambiar estado; no crear/editar contenido/eliminar. No se añaden KPI.
+
+## Detalle, formularios y confirmación
 
 ```text
-┌────────── Detalle del equipamiento ────────── [Cerrar] ────┐
-│ Nombre, descripción, marca, modelo, categoría y ubicación │
-│ Historial cronológico:                                   │
-│  • Almacén: inicio → fin                                 │
-│  • Aula: inicio → actualidad [Ubicación actual]            │
-│ [Trasladar equipamiento] solo Conserje                    │
-└──────────────────────────────────────────────────────────┘
+Detalle o acción del registro                       [Cerrar]
+Datos generales y, en equipo, historial cronológico
+Etiqueta [campo]
+Ayuda / error conectado al campo
+[Cancelar]                   [Guardar cambios / acción concreta]
 ```
 
-Los tiempos se muestran tal como están registrados en MySQL; no se inventa otra zona horaria. El histórico es de consulta.
+Un campo debajo de otro. Equipo nuevo sin selector de ubicación; traslado solo pide destino. Aviso USER sin autor ni estado. Contraseña nueva opcional en edición de usuarios. Error de validación enfoca el primer campo que necesita corrección.
 
-## Formularios, traslado y confirmaciones
+El borrado sigue requiriendo Sí, eliminar. El foco inicial en Cancelar evita un borrado accidental. Escape cierra, salvo los segundos de una escritura en curso, limitada por timeout.
 
-```text
-┌────────── Nueva / Editar entidad ──────────── [Cerrar] ────┐
-│ Explicación breve de la regla                             │
-│ Etiqueta [campo]               Etiqueta [campo]            │
-│ Descripción [texto de varias líneas]                      │
-│ Ayuda / error específico                                  │
-│                              [Cancelar] [Guardar cambios]│
-└──────────────────────────────────────────────────────────┘
-```
+## Móvil y ampliación
 
-Equipamiento ADMIN no incluye ubicación. Traslado USER solo incluye destino. Aviso USER no incluye estado/autor. Cambio de estado ADMIN solo incluye el enum. Usuario incluye contraseña nueva opcional en edición. Almacén tiene nombre de solo lectura y no ofrece borrado.
+Cabecera/navegación se ajustan en filas; formularios continúan a una columna. La tabla se desplaza horizontalmente dentro de su región, con instrucciones para teclado. El resto se adapta sin desbordamiento horizontal de página.
 
-Las eliminaciones abren otro diálogo con el nombre del registro, sus consecuencias y dos acciones: Cancelar / Sí, eliminar. El foco inicial está en Cancelar. Durante la escritura se desactiva la repetición y el cierre para evitar ambigüedad.
-
-## Adaptación móvil
-
-```text
-┌───────────────────────────┐
-│ Marca                     │
-│ Inventario Ubicaciones    │
-│ Avisos [Usuarios ADMIN]   │
-├───────────────────────────┤
-│ Cuenta · Rol · Salir      │
-│ Título / acción de alta   │
-│ Resumen                  │
-│ Filtro / actualizar      │
-│ Tabla con desplazamiento │
-└───────────────────────────┘
-```
-
-Se mantiene la tabla semántica, con desplazamiento horizontal dentro de su región enfocable. Los formularios pasan a una columna. Esta decisión conserva la comparación entre registros sin desbordar toda la página.
-
-## Capturas de navegador
+## Capturas reales
 
 - [Acceso](evidencias/acceso.png).
-- [Inventario de escritorio, 1440 × 1000](evidencias/escritorio.png).
-- [Inventario móvil, 390 × 844](evidencias/movil.png).
+- [Administrador en escritorio](evidencias/escritorio.png).
+- [Conserje en móvil](evidencias/movil.png).
+- [Protanopia](evidencias/conserje-protanopia.png), [deuteranopia](evidencias/conserje-deuteranopia.png) y [tritanopia](evidencias/conserje-tritanopia.png).
+- [Reflujo equivalente al 400%](evidencias/reflujo-400-equivalente.png).
+- [Texto al 200%](evidencias/texto-200.png).
 
-La captura móvil puede incluir cuentas y registros ficticios temporales de la prueba, que después se eliminaron. No contiene credenciales SQL ni contraseñas.
+Las capturas pueden incluir registros ficticios ui_test_ que se eliminan al terminar. No incluyen contraseñas ni credenciales SQL. La revisión visual de una simulación no garantiza accesibilidad.

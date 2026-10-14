@@ -23,6 +23,8 @@ Las rutas y cuerpos coinciden con la [documentación del backend](../backend/END
 
 `createElement`, `textContent`, `append` y `replaceChildren` construyen las vistas. No se usa innerHTML, eval o plantillas HTML para datos del servidor. El contenido malicioso de un registro se muestra como texto y se comprueba en Chrome con una descripción de prueba que contiene una etiqueta img.
 
+El rediseño utiliza enlaces nativos de navegación y acciones con entidad explícita. Los botones de fila tienen nombre accesible con el registro y una clave de foco estable; al recargar la tabla se recupera el equivalente del botón que abrió el diálogo. La primera celda es un encabezado de fila, además de los de columna.
+
 Un contador de versión descarta lecturas antiguas si se cambia rápidamente de sección. El detalle comprueba que su indicador de carga siga en el diálogo antes de pintar una respuesta tardía. Son medidas de presentación; no alteran reglas del backend.
 
 ## Validación y errores
@@ -32,6 +34,10 @@ El navegador comprueba campos obligatorios y límites. JavaScript rechaza texto 
 Se muestran mensajes legibles para errores del API. Un fallo de red ofrece Actualizar/reintento; no repite automáticamente escrituras. Si el guardado terminó pero la lectura posterior falla, no se invita a duplicar el alta. Si la sesión desaparece o recibe 401, se vuelve al acceso y se obtiene un token nuevo. Un 403 se comunica sin convertirlo en éxito ni intentar la operación con otro rol.
 
 Tras un 403 se relee la identidad efectiva, se actualiza el perfil y, si cambió cuenta/rol, se cierra el formulario antiguo y se recargan los controles. Login muestra nombre y rol, para evitar confundir una cuenta denominada conserje con un rol ADMIN guardado en MySQL. La [revisión de ubicaciones](../backend/REVISION_PERMISOS_UBICACIONES.md) contiene una prueba real de este cambio de rol.
+
+Los errores de campo tienen texto e ID asociado por aria-describedby; se enfoca el primero que necesita corrección. Los errores locales no se duplican como alerta global. Si un 403 conserva el formulario, su error permanece dentro del diálogo; si se cambia de rol y se cierra, se muestra en la página. El éxito se anuncia tras cerrar el diálogo, cuando el resto del documento deja de ser inert. Se limita la petición a 15 segundos, sin reintentar escrituras; un timeout advierte que conviene comprobar la lista antes de repetir.
+
+Se han eliminado los resúmenes y sus consultas extra en Inventario. El estado de lectura usa una región accesible, sin contadores visibles. No se modificó la autorización PHP, el esquema, los triggers ni la zona horaria de los datos.
 
 ## Ajustes PHP para la integración
 

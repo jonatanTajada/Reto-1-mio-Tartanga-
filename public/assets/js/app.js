@@ -11,13 +11,14 @@ let usuario = null;
 let version = 0;
 let seccion = 'equipamientos';
 const pantallas = {
-  equipamientos: { titulo: 'Inventario', lista: 'Equipamientos del centro', descripcion: 'Consulta los equipos del centro y su ubicación actual.', nuevo: 'Nuevo equipamiento', editar: editarEquipo, listado: listadoEquipos },
-  ubicaciones: { titulo: 'Ubicaciones', lista: 'Espacios del centro', descripcion: 'Aulas, almacén y espacios donde se encuentra el equipamiento.', nuevo: 'Nueva ubicación', editar: editarUbicacion, listado: listadoUbicaciones },
-  notificaciones: { titulo: 'Notificaciones', lista: 'Avisos y mantenimiento', descripcion: 'Incidencias y necesidades de mantenimiento, con su estado de seguimiento.', nuevo: 'Nueva notificación', editar: editarAviso, listado: listadoAvisos },
-  usuarios: { titulo: 'Usuarios', lista: 'Cuentas del centro', descripcion: 'Gestiona las cuentas y los permisos de acceso a la aplicación.', nuevo: 'Nuevo usuario', editar: editarUsuario, listado: listadoUsuarios },
+  equipamientos: { titulo: 'Inventario', lista: 'Equipos disponibles', descripcion: 'Consulta los equipos y su ubicación.', nuevo: 'Crear equipo', editar: editarEquipo, listado: listadoEquipos },
+  ubicaciones: { titulo: 'Ubicaciones', lista: 'Espacios del centro', descripcion: 'Consulta las aulas y los espacios donde se guarda el material.', nuevo: 'Crear ubicación', editar: editarUbicacion, listado: listadoUbicaciones },
+  notificaciones: { titulo: 'Avisos', lista: 'Avisos del centro', descripcion: 'Comunica un problema o una necesidad de mantenimiento.', nuevo: 'Crear aviso', editar: editarAviso, listado: listadoAvisos },
+  usuarios: { titulo: 'Usuarios', lista: 'Cuentas del centro', descripcion: 'Gestiona las cuentas y sus permisos de acceso.', nuevo: 'Crear usuario', editar: editarUsuario, listado: listadoUsuarios },
 };
 
 function mostrarAcceso(texto = '') {
+  mensaje('');
   usuario = null; version++;
   if (porId('dialogo').open) porId('dialogo').close();
   porId('aplicacion').hidden = true; porId('acceso').hidden = false;
@@ -33,16 +34,17 @@ function ajustarRol() {
   porId('nav-usuarios').hidden = usuario.rol !== 'ADMIN';
   porId('cuenta-nombre').textContent = usuario.nombre_usuario;
   porId('cuenta-rol').textContent = roles[usuario.rol];
-  porId('ayuda-rol').textContent = usuario.rol === 'ADMIN' ? 'Administra equipos, espacios y cuentas. Revisa los avisos del centro.' : 'Consulta equipos, registra traslados y comunica avisos al Administrador.';
+  porId('ayuda-rol').textContent = '';
 }
 
-function manejarError(error) {
-  mensaje(error.message, true);
+async function manejarError(error, anunciar = true) {
   if (error.estado === 401) {
     mostrarAcceso('Tu sesión ha caducado o ya no es válida. Inicia sesión de nuevo.');
     // Obtener un CSRF nuevo sin repetir automáticamente ninguna operación de escritura.
     conectar(false);
-  } else if (error.estado === 403) actualizarIdentidad();
+    return; // El formulario de acceso anuncia este error; no duplicarlo en la región global.
+  } else if (error.estado === 403) await actualizarIdentidad();
+  if (anunciar) mensaje(error.message, true);
 }
 
 async function actualizarIdentidad() {
@@ -67,9 +69,12 @@ const contexto = {
   error: manejarError,
   async guardar(ruta, metodo, datos, texto) {
     await pedir(ruta, metodo, datos);
-    mensaje(texto);
     // La escritura ya terminó: un fallo posterior de lectura no debe invitar a duplicar el alta.
     await cargar(false);
+    if (porId('dialogo').open) porId('dialogo').close();
+    // El resto del documento deja de ser inert antes de anunciar el resultado del diálogo.
+    await new Promise(requestAnimationFrame);
+    mensaje(texto);
   },
 };
 
@@ -96,8 +101,8 @@ async function cargar(enfocar = true) {
   }
   porId('nuevo').textContent = pantalla.nuevo; porId('nuevo').hidden = !permisoAlta();
   porId('filtro-categoria').hidden = seccion !== 'equipamientos';
-  porId('resumen').hidden = true; porId('lista').replaceChildren();
-  porId('lista').setAttribute('aria-busy', 'true'); porId('estado-lista').textContent = 'Cargando datos…';
+  porId('lista').replaceChildren();
+  porId('lista').setAttribute('aria-busy', 'true'); porId('estado-lista').classList.remove('solo-lector'); porId('estado-lista').textContent = 'Cargando datos…';
   if (enfocar) porId('panel').focus();
   try {
     const sesion = await pedir('/sesion');
@@ -110,20 +115,12 @@ async function cargar(enfocar = true) {
     const filas = await pedir(`/${seccion}${filtro}`);
     if (actual !== version) return;
     porId('lista').replaceChildren(filas.length ? pantalla.listado(filas, contexto) : vacio('No hay registros para mostrar', seccion === 'equipamientos' && filtro ? 'Prueba con otra categoría o selecciona todas.' : 'Los registros aparecerán aquí cuando se creen.'));
-    porId('estado-lista').textContent = `${filas.length} registros cargados.`;
-    if (seccion === 'equipamientos') {
-      const [ubicaciones, avisos] = await Promise.all([pedir('/ubicaciones'), pedir('/notificaciones')]);
-      if (actual !== version) return;
-      const resumen = porId('resumen'); resumen.replaceChildren();
-      for (const [titulo, numero, nota] of [['Equipamientos', filas.length, filtro ? 'En la categoría seleccionada' : 'En todo el inventario'], ['Ubicaciones', ubicaciones.length, 'Espacios disponibles'], ['Avisos visibles', avisos.length, usuario.rol === 'ADMIN' ? 'Todos los avisos del centro' : 'Avisos de tu cuenta']]) {
-        const dato = elemento('div', undefined, 'dato-resumen'); dato.append(elemento('span', titulo), elemento('strong', numero), elemento('small', nota)); resumen.append(dato);
-      }
-      resumen.hidden = false;
-    }
+    porId('estado-lista').textContent = 'Lista actualizada.';
+    porId('estado-lista').classList.add('solo-lector');
   } catch (error) {
     if (actual !== version) return;
     porId('lista').replaceChildren(vacio('No se pudieron cargar los datos', 'Pulsa Actualizar para volver a intentarlo.'));
-    porId('estado-lista').textContent = 'Error de carga.'; manejarError(error);
+    porId('estado-lista').classList.remove('solo-lector'); porId('estado-lista').textContent = 'Error de carga.'; manejarError(error);
   } finally { if (actual === version) porId('lista').setAttribute('aria-busy', 'false'); }
 }
 
@@ -154,6 +151,7 @@ porId('form-login').addEventListener('submit', async evento => {
 porId('navegacion').addEventListener('click', evento => {
   const item = evento.target.closest('[data-seccion]');
   if (!item) return;
+  evento.preventDefault();
   mensaje('');
   if (location.hash === '#' + item.dataset.seccion) cargar(); else location.hash = item.dataset.seccion;
 });
@@ -167,9 +165,6 @@ porId('salir').addEventListener('click', async () => {
   try { await pedir('/logout', 'POST'); mostrarAcceso(); mensaje('Has cerrado sesión.'); }
   catch (error) { manejarError(error); }
   finally { porId('salir').disabled = false; }
-});
-porId('dialogo').addEventListener('close', () => {
-  if (usuario && document.activeElement === document.body) porId('panel').focus();
 });
 document.querySelector('.saltar').addEventListener('click', evento => {
   evento.preventDefault();

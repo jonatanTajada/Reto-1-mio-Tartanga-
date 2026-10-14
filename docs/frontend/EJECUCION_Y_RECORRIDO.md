@@ -59,3 +59,7 @@ El cliente Chrome necesita Node 22 o posterior y Chrome instalado en la ruta Win
 Las pruebas crean filas ficticias `http_test_` y `ui_test_`, comparan datos anteriores y limpian solo sus IDs. No ejecutarlas simultáneamente ni mientras otros usuarios escriben. Si se interrumpen a la fuerza, la limpieza puede quedar pendiente: conservar la salida y revisar solo los IDs de esa ejecución, sin borrar tablas ni restablecer secuencias.
 
 Pruebas específicas del caso de Ubicaciones: `python tools/probar_permisos_ubicaciones.py` y `node tools/probar_sesiones_ubicaciones.mjs`. El segundo utiliza dos perfiles Chrome independientes y una cuenta temporal para comprobar la respuesta de la interfaz al cambio de rol. No elimina «I+D+I».
+
+En el rediseño: «Ver detalles» contiene el historial, «Trasladar equipo» abre el destino y «Confirmar traslado» guarda. La sección de notificaciones se muestra como «Avisos» y su alta como «Crear aviso». No hay tarjetas de estadísticas.
+
+Para repetir los flujos sin ratón: `node tools/probar_frontend.mjs --teclado`. Usa entrada nativa en Chrome y genera las capturas de ampliación/simulaciones; no equivale a una prueba humana ni con lector de pantalla. Los controles dentro de una tabla estrecha son alcanzables con Tab y las flechas desplazan su región. Escape cancela un diálogo; durante los segundos de un guardado se evita interrumpir/repetir la operación.

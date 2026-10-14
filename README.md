@@ -6,6 +6,8 @@ Proyecto individual de aprendizaje de DAW. Aplicación para gestionar usuarios, 
 
 ## Estado real
 
+Rediseño 14/10/2026: navegación horizontal por tareas, sin KPI ni resúmenes para el Conserje ni el Administrador, acceso sencillo, mensajes en el flujo y acciones explícitas. Verificados los flujos por teclado: **44 comprobaciones y 420 pasos Tab**; perfiles independientes 12, HTTP del caso 44 y regresión 118. Objetivo WCAG 2.2 AA: contraste, foco, semántica, texto 200% y reflujo equivalente 400% comprobados con límites. Lector real, zoom nativo y pruebas humanas pendientes. [Diseño y pruebas](docs/frontend/ACCESIBILIDAD_Y_PRUEBAS.md).
+
 Revisión 12/10/2026: `conserje_demo` tenía rol ADMIN en MySQL; se restableció su rol original USER. Ubicaciones mantiene CRUD ADMIN y consulta USER, conservando el traslado de equipos. Probados 44 HTTP del caso, 12 controles Chrome con perfiles independientes y 118 HTTP de regresión. «I+D+I» y datos anteriores conservados. [Informe y límites](docs/backend/REVISION_PERMISOS_UBICACIONES.md).
 
 Bloque 1: instalación original y datos ejecutados por el usuario en Workbench. Sus capturas confirman cinco tablas, siete triggers, consultas de inconsistencias sin filas y ejecución transaccional terminada con ROLLBACK sin errores SQL. El usuario comunica funcionamiento correcto; los nueve valores PASS/FAIL y los rechazos individuales no tienen evidencia visual registrada.

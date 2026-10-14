@@ -13,11 +13,22 @@ export async function pedir(ruta, metodo = 'GET', datos) {
     opciones.body = JSON.stringify(datos);
   }
   let respuesta;
+  const limite = new AbortController();
+  const temporizador = setTimeout(() => limite.abort(), 15000);
+  opciones.signal = limite.signal;
   try { respuesta = await fetch(`/api${ruta}`, opciones); }
-  catch { throw new ErrorApi('No se pudo conectar. Comprueba tu conexión y vuelve a intentarlo.', 0); }
+  catch (error) {
+    clearTimeout(temporizador);
+    if (error.name === 'AbortError') throw new ErrorApi('La respuesta tarda demasiado. Actualiza la lista antes de volver a guardar: la operación podría haberse completado.', 0);
+    throw new ErrorApi('No se pudo conectar. Comprueba tu conexión y vuelve a intentarlo.', 0);
+  }
   let contenido;
   try { contenido = await respuesta.json(); }
-  catch { throw new ErrorApi('El servidor no devolvió una respuesta válida. Inténtalo de nuevo.', respuesta.status); }
+  catch (error) {
+    if (error.name === 'AbortError') throw new ErrorApi('La respuesta tarda demasiado. Actualiza la lista antes de volver a guardar: la operación podría haberse completado.', 0);
+    throw new ErrorApi('El servidor no devolvió una respuesta válida. Inténtalo de nuevo.', respuesta.status);
+  }
+  finally { clearTimeout(temporizador); }
   if (!respuesta.ok || !contenido.ok) throw new ErrorApi(contenido.error?.mensaje || 'No se pudo completar la operación.', respuesta.status);
   if (contenido.datos?.csrf_token) csrf = contenido.datos.csrf_token;
   return contenido.datos;

@@ -1,6 +1,23 @@
 # Plan y estado
 
-Fecha de revisión: 12 de octubre de 2026.
+Fecha de revisión: 14 de octubre de 2026.
+
+## Rediseño sencillo y accesible — 14/10/2026
+
+- [x] Releer ODT/DIN y revisar permisos efectivos: ADMIN, USER, USER; sin cambios de rol.
+- [x] Preparar boceto y justificación antes de modificar la interfaz.
+- [x] Retirar menú lateral, ilustración de acceso y tarjetas de resumen; navegación por tareas y acciones explícitas.
+- [x] Mantener todos los módulos, permisos PHP, fetch y CSRF; sin Service/framework/CDN.
+- [x] Errores asociados a campos, anuncios sin duplicación, foco restaurado tras recarga y controles de al menos 44px.
+- [x] 44 comprobaciones Chrome con 420 pasos Tab, Enter y escritura nativa; flujos completos de ambos roles.
+- [x] Ampliación de texto 200%, reflujo equivalente 400%, móvil/escritorio y tres simulaciones de daltonismo revisadas.
+- [x] Diez pares de texto >=4.5:1 y cuatro de controles >=3:1.
+- [x] 12 perfiles/controles independientes, 44 HTTP del caso y 118 HTTP de regresión.
+- [x] Ocho controles finales de integridad correctos; 3 usuarios, 5 ubicaciones, 6 equipos, 8 intervalos y 3 avisos conservados, incluidos I+D+I. Trece originales intactos.
+- [ ] Zoom nativo 400%, lector de pantalla real, auditoría completa WCAG/HTML/CSS y pruebas con personas.
+- [ ] Revisión del usuario; no configurar Ubuntu.
+
+Ver [boceto previo](frontend/BOCETO_REDISENO_2026_10_14.md) y [resultados/límites](frontend/ACCESIBILIDAD_Y_PRUEBAS.md). La emulación de reflujo y el árbol accesible no se presentan como pruebas humanas o de lector real.
 
 ## Revisión posterior — Permisos de Ubicaciones
 

@@ -1,14 +1,14 @@
 /** Avisos propios del Conserje; el Administrador consulta todos y cambia el estado. */
-import { boton, elemento, fecha, tabla } from './dom.js';
+import { boton, elemento, fecha, tabla, identificarAcciones } from './dom.js';
 import { confirmar, formulario } from './formularios.js';
 import { estados, opciones } from './catalogos.js';
 
 export function editarAviso(contexto, fila = null) {
-  formulario(fila ? 'Editar notificación' : 'Nueva notificación', [
+  formulario(fila ? 'Editar aviso' : 'Crear aviso', [
     { nombre: 'titulo', etiqueta: 'Título', maximo: 150, valor: fila?.titulo },
     { nombre: 'descripcion', etiqueta: 'Descripción', tipo: 'textarea', maximo: 65535, valor: fila?.descripcion },
-  ], datos => contexto.guardar(`/notificaciones${fila ? '/' + fila.id_notificacion : ''}`, fila ? 'PUT' : 'POST', datos, 'Notificación guardada.'), contexto.error,
-  'El aviso se asocia a tu cuenta. Los nuevos avisos comienzan pendientes; el Administrador gestiona su estado.');
+  ], datos => contexto.guardar(`/notificaciones${fila ? '/' + fila.id_notificacion : ''}`, fila ? 'PUT' : 'POST', datos, 'Aviso guardado.'), contexto.error,
+  'Explica qué ha ocurrido o qué necesita atención. El Administrador actualizará el estado.', fila ? 'Guardar cambios' : 'Crear aviso');
 }
 
 function cambiarEstado(contexto, fila) {
@@ -17,7 +17,7 @@ function cambiarEstado(contexto, fila) {
 }
 
 export function listadoAvisos(filas, contexto) {
-  return tabla(['Notificación', 'Creación / autor', 'Estado', 'Acciones'], filas.map(fila => {
+  return tabla(['Aviso', 'Creación / autor', 'Estado', 'Acciones'], filas.map(fila => {
     const titulo = elemento('div', fila.titulo, 'nombre-equipo');
     titulo.append(elemento('span', fila.descripcion, 'celda-secundaria'));
     const creador = elemento('div', fecha(fila.fecha_creacion)); creador.append(elemento('span', fila.creador, 'celda-secundaria'));
@@ -26,10 +26,11 @@ export function listadoAvisos(filas, contexto) {
     const acciones = elemento('div', undefined, 'acciones');
     if (contexto.usuario.rol === 'ADMIN') acciones.append(boton('Cambiar estado', () => cambiarEstado(contexto, fila)));
     else {
-      acciones.append(boton('Editar', () => editarAviso(contexto, fila)));
-      if (fila.estado !== 'REALIZADA') acciones.append(boton('Eliminar', () => confirmar('Eliminar notificación', `¿Eliminar «${fila.titulo}»? Esta acción no se puede deshacer.`, () => contexto.guardar(`/notificaciones/${fila.id_notificacion}`, 'DELETE', undefined, 'Notificación eliminada.'), contexto.error), 'peligro'));
+      acciones.append(boton('Editar aviso', () => editarAviso(contexto, fila)));
+      if (fila.estado !== 'REALIZADA') acciones.append(boton('Eliminar aviso', () => confirmar('Eliminar aviso', `¿Eliminar «${fila.titulo}»? Esta acción no se puede deshacer.`, () => contexto.guardar(`/notificaciones/${fila.id_notificacion}`, 'DELETE', undefined, 'Aviso eliminado.'), contexto.error), 'peligro'));
       else acciones.append(elemento('span', 'No se puede eliminar', 'etiqueta'));
     }
+    identificarAcciones(acciones, `aviso-${fila.id_notificacion}`, fila.titulo);
     return [titulo, creador, estado, acciones];
-  }), `${filas.length} notificaciones ${contexto.usuario.rol === 'ADMIN' ? 'del centro' : 'de tu cuenta'}.`);
+  }), contexto.usuario.rol === 'ADMIN' ? 'Avisos del centro y su estado.' : 'Avisos creados por tu cuenta.');
 }

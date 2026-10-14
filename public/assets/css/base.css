@@ -1,39 +1,36 @@
-/* Base visual: colores, tipografía y espacio compartidos, sin dependencias externas. */
+/* Identidad común: papel claro, tinta oscura y acciones azules, sin fuentes externas. */
 :root {
-  --fondo: #f4f6f8;
-  --superficie: #fff;
-  --tinta: #172c42;
-  --muted: #526275;
-  --linea: #d7dfe7;
-  --navy: #172c42;
-  --verde: #0b6b59;
-  --verde-hover: #085345;
-  --verde-claro: #e7f5ee;
-  --rojo: #a52332;
-  --rojo-claro: #fff0f1;
-  --radio: 12px;
-  --sombra: 0 8px 30px #172c420a;
+  --fondo: #faf8f3;
+  --superficie: #ffffff;
+  --tinta: #202d3a;
+  --muted: #4c5966;
+  --linea: #ccd1d5;
+  --control: #596978;
+  --azul: #254c74;
+  --azul-hover: #163959;
+  --foco: #102e50;
+  --rojo: #922535;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  font-size: 100%;
+}
+
 body {
   margin: 0;
   background: var(--fondo);
   color: var(--tinta);
-  font-family: system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size: 16px;
-  line-height: 1.55;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
-button,input,select,textarea {
+button, input, select, textarea {
   font: inherit;
-}
-
-button,a,input,select,textarea {
-  -webkit-tap-highlight-color: transparent;
 }
 
 button {
@@ -42,111 +39,110 @@ button {
 
 button:disabled {
   cursor: wait;
-  opacity: .65;
+  opacity: .7;
 }
 
-h1,h2,h3,p {
+h1, h2, h3, p {
   margin-top: 0;
 }
 
 h1 {
-  font-size: clamp(1.8rem,3vw,2.5rem);
-  line-height: 1.15;
-  letter-spacing: -.035em;
-  margin-bottom: 12px;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1.25;
+  margin-bottom: .75rem;
 }
 
 h2 {
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   line-height: 1.4;
 }
 
 h3 {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
 }
 
 p {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
-small,.ayuda {
-  font-size: .85rem;
-}
-
-.muted,.ayuda {
+.muted, .ayuda {
   color: var(--muted);
 }
 
-.ceja {
-  font-size: .72rem;
-  font-weight: 750;
-  letter-spacing: .13em;
-  color: var(--verde);
-  margin-bottom: 12px;
+.ayuda {
+  font-size: .95rem;
 }
 
 .ancho {
   width: 100%;
 }
 
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 [hidden] {
-  display: none!important;
+  display: none !important;
 }
 
+/* Borde exterior e interior: mantiene el foco visible dentro de zonas desplazables. */
 :focus-visible {
-  outline: 3px solid #b55316;
+  outline: 3px solid var(--foco);
   outline-offset: 3px;
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
-.saltar {
-  position: fixed;
-  left: 12px;
-  top: -70px;
-  padding: 12px;
-  background: white;
-  color: var(--tinta);
-  z-index: 100;
-}
-
-.saltar:focus {
-  top: 12px;
+input, select, textarea, button, a, [tabindex] {
+  scroll-margin-block: 1rem;
 }
 
 a {
-  color: var(--verde);
+  color: var(--azul);
+  text-underline-offset: .2em;
+}
+
+.saltar {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 10;
+  background: #ffffff;
+  padding: .75rem 1rem;
+  color: var(--tinta);
+}
+
+.saltar:focus {
+  top: .5rem;
 }
 
 .marca {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  margin: 0;
+  font-size: 1.25rem;
   font-weight: 750;
-  font-size: 1.2rem;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
-.marca small {
+.marca span {
   display: block;
-  font-size: .72rem;
+  font-size: 1rem;
   font-weight: 400;
-  letter-spacing: .01em;
-  margin-top: 5px;
-  color: #cad6e2;
-}
-
-.marca-icono {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: #d3efe5;
-  color: #174b40;
-  font-size: 1.5rem;
-}
-
-.pie-panel {
-  font-size: .8rem;
   color: var(--muted);
-  margin: 22px 0 0;
+  margin-top: .25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
 }

@@ -16,13 +16,13 @@ export function boton(texto, accion, clase = 'secundario') {
 }
 
 export function mensaje(texto, error = false) {
-  const nodo = porId('mensajes');
-  nodo.classList.toggle('error', error);
-  nodo.setAttribute('role', error ? 'alert' : 'status');
-  nodo.textContent = texto;
+  const nodo = porId(error ? 'errores' : 'mensajes');
+  porId(error ? 'mensajes' : 'errores').textContent = '';
+  if (nodo.textContent !== texto) nodo.textContent = texto;
 }
 
 let guardando = false;
+let focoAnterior = null;
 porId('cerrar-dialogo').addEventListener('click', () => porId('dialogo').close());
 porId('dialogo').addEventListener('cancel', evento => {
   // No interrumpir una escritura pendiente: podría haberse guardado aunque el cliente cierre.
@@ -39,13 +39,32 @@ export function abrirDialogo(titulo) {
   cuerpo.replaceChildren();
   porId('titulo-dialogo').textContent = titulo;
   bloquearDialogo(false);
-  if (!porId('dialogo').open) porId('dialogo').showModal();
+  if (!porId('dialogo').open) {
+    focoAnterior = document.activeElement;
+    porId('dialogo').showModal();
+  }
   return cuerpo;
+}
+
+porId('dialogo').addEventListener('close', () => {
+  // Una recarga de la tabla puede sustituir el botón que abrió el diálogo.
+  const clave = focoAnterior?.dataset.foco;
+  const nuevo = clave ? document.querySelector(`[data-foco="${CSS.escape(clave)}"]`) : null;
+  const destino = focoAnterior?.isConnected && focoAnterior.getClientRects().length ? focoAnterior : nuevo;
+  if (destino && !destino.disabled) destino.focus();
+  else porId(porId('aplicacion').hidden ? 'login-usuario' : 'panel').focus();
+});
+
+export function identificarAcciones(acciones, referencia, nombre) {
+  for (const control of acciones.querySelectorAll('button')) {
+    control.dataset.foco = `${referencia}:${control.textContent}`;
+    control.setAttribute('aria-label', `${control.textContent}: ${nombre}`);
+  }
 }
 
 export function tabla(titulos, filas, descripcion) {
   const nodo = elemento('table');
-  nodo.append(elemento('caption', descripcion));
+  nodo.append(elemento('caption', descripcion, 'solo-lector'));
   const cabecera = elemento('thead');
   const fila = elemento('tr');
   for (const titulo of titulos) { const celda = elemento('th', titulo); celda.scope = 'col'; fila.append(celda); }
@@ -53,8 +72,9 @@ export function tabla(titulos, filas, descripcion) {
   const cuerpo = elemento('tbody');
   for (const valores of filas) {
     const fila = elemento('tr');
-    for (const valor of valores) {
-      const celda = elemento('td');
+    for (const [indice, valor] of valores.entries()) {
+      const celda = elemento(indice === 0 ? 'th' : 'td');
+      if (indice === 0) celda.scope = 'row';
       if (valor instanceof Node) celda.append(valor); else celda.textContent = String(valor ?? '—');
       fila.append(celda);
     }

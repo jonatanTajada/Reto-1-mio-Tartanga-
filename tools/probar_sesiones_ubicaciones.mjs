@@ -70,13 +70,13 @@ try {
   await admin.ubicaciones(); await user.ubicaciones();
   await comprobar(admin, "document.getElementById('cuenta-nombre').textContent==='admin_demo' && document.getElementById('cuenta-rol').textContent==='Administrador'", 'Perfil ADMIN coincide con PHP');
   await comprobar(user, "document.getElementById('cuenta-nombre').textContent==='conserje_demo' && document.getElementById('cuenta-rol').textContent==='Conserje'", 'Perfil USER coincide con PHP');
-  await comprobar(admin, "!document.getElementById('nuevo').hidden && document.getElementById('nuevo').textContent==='Nueva ubicación'", 'ADMIN tiene Nueva ubicación');
-  await comprobar(admin, "[...document.querySelectorAll('#lista button')].some(b=>b.textContent==='Editar') && [...document.querySelectorAll('#lista button')].some(b=>b.textContent==='Eliminar')", 'ADMIN tiene edición y eliminación');
-  await comprobar(user, "document.getElementById('nuevo').hidden && ![...document.querySelectorAll('#lista button')].some(b=>['Editar','Eliminar'].includes(b.textContent))", 'USER solo consulta ubicaciones');
+  await comprobar(admin, "!document.getElementById('nuevo').hidden && document.getElementById('nuevo').textContent==='Crear ubicación'", 'ADMIN tiene Crear ubicación');
+  await comprobar(admin, "[...document.querySelectorAll('#lista button')].some(b=>b.textContent==='Editar ubicación') && [...document.querySelectorAll('#lista button')].some(b=>b.textContent==='Eliminar ubicación')", 'ADMIN tiene edición y eliminación');
+  await comprobar(user, "document.getElementById('nuevo').hidden && ![...document.querySelectorAll('#lista button')].some(b=>b.textContent.startsWith('Editar')||b.textContent.startsWith('Eliminar'))", 'USER solo consulta ubicaciones');
   await comprobar(user, "document.getElementById('lista').textContent.includes('I+D+I')", 'I+D+I sigue disponible para consulta');
   await user.evaluar("document.querySelector('[data-seccion=equipamientos]').click()");
   await user.esperar("location.hash==='#equipamientos' && document.getElementById('lista').getAttribute('aria-busy')==='false'");
-  await comprobar(user, "[...document.querySelectorAll('#lista button')].some(b=>b.textContent==='Trasladar')", 'USER conserva Trasladar equipamientos');
+  await comprobar(user, "[...document.querySelectorAll('#lista button')].some(b=>b.textContent==='Trasladar equipo')", 'USER conserva Trasladar equipamientos');
   await admin.evaluar("document.getElementById('actualizar').click()");
   await admin.esperar("document.getElementById('lista').getAttribute('aria-busy')==='false'");
   await comprobar(admin, "document.getElementById('cuenta-rol').textContent==='Administrador' && !document.getElementById('nuevo').hidden", 'Login de USER no cambia la sesión ADMIN independiente');
@@ -97,7 +97,7 @@ try {
     await user.evaluar(`{document.getElementById('campo-nombre').value=${JSON.stringify(nombre)};document.getElementById('campo-descripcion').value='No debe crearse';document.querySelector('#cuerpo-dialogo form').requestSubmit();}`);
     await user.esperar("document.getElementById('cuenta-rol').textContent==='Conserje' && document.getElementById('nuevo').hidden && document.getElementById('lista').getAttribute('aria-busy')==='false'");
     await comprobar(user, "!document.getElementById('dialogo').open", '403 tras cambio de rol cierra formulario con permisos antiguos');
-    await comprobar(user, "document.getElementById('mensajes').textContent.includes('Tu rol no permite')", '403 comunica el rechazo sin repetir la escritura');
+    await comprobar(user, "document.getElementById('errores').textContent.includes('Tu rol no permite')", '403 comunica el rechazo sin repetir la escritura');
     if (JSON.stringify(await admin.api('/ubicaciones')) !== JSON.stringify(antesUbicaciones)) throw new Error('La escritura rechazada alteró ubicaciones.');
     pruebas++; console.log('PASS: 403 tras cambio de rol no crea ubicación.');
   } finally {

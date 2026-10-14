@@ -47,14 +47,16 @@ def luminancia(color):
 
 
 pares = [
-    ('Texto principal', '#172c42', '#ffffff'),
-    ('Texto secundario', '#526275', '#ffffff'),
-    ('Botón principal', '#ffffff', '#0b6b59'),
-    ('Navegación', '#d4dfeb', '#172c42'),
-    ('Aviso pendiente', '#735210', '#fff3d9'),
-    ('Aviso en proceso', '#304e89', '#e9effb'),
-    ('Aviso realizado', '#17543f', '#e7f5ee'),
-    ('Error', '#a52332', '#fff0f1'),
+    ('Texto principal', '#202d3a', '#ffffff'),
+    ('Texto secundario', '#4c5966', '#ffffff'),
+    ('Botón principal', '#ffffff', '#254c74'),
+    ('Navegación', '#254c74', '#ffffff'),
+    ('Aviso pendiente', '#624b12', '#fff7e4'),
+    ('Aviso en proceso', '#29496d', '#edf2fa'),
+    ('Aviso realizado', '#263847', '#f1f3f5'),
+    ('Error', '#922535', '#fff0f1'),
+    ('Texto sobre fondo de página', '#202d3a', '#faf8f3'),
+    ('Texto secundario sobre fondo de página', '#4c5966', '#faf8f3'),
 ]
 css = '\n'.join(p.read_text(encoding='utf-8') for p in (raiz / 'public/assets/css').glob('*.css'))
 colores = set(re.findall(r'#[0-9a-fA-F]{3,8}\b', css))
@@ -65,4 +67,9 @@ for nombre, texto, fondo in pares:
     ratio = (alto + 0.05) / (bajo + 0.05)
     assert ratio >= 4.5, f'Contraste insuficiente: {nombre}'
     print(f'PASS contraste: {nombre}, {ratio:.2f}:1')
-print('Ocho pares de texto comprobados (mínimo 4.5:1). No es una auditoría completa de accesibilidad ni un validador HTML/CSS.')
+for nombre, color, fondo in [('Borde de entrada', '#596978', '#ffffff'), ('Borde de entrada sobre página', '#596978', '#faf8f3'), ('Foco', '#102e50', '#ffffff'), ('Acción sobre superficie', '#254c74', '#ffffff')]:
+    alto, bajo = sorted((luminancia(color), luminancia(fondo)), reverse=True)
+    ratio = (alto + .05) / (bajo + .05)
+    assert ratio >= 3, f'Contraste no textual insuficiente: {nombre}'
+    print(f'PASS contraste de control: {nombre}, {ratio:.2f}:1')
+print('Diez pares de texto (>=4.5:1) y cuatro de controles (>=3:1). No certifica WCAG completo ni valida HTML/CSS formalmente.')
